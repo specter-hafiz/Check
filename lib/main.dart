@@ -1,6 +1,7 @@
 import 'package:check/components/colors.dart';
 import 'package:check/firebase_options.dart';
 import 'package:check/providers/auth_provider.dart';
+import 'package:check/providers/db_provider.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: AuthProvider()),
+        ChangeNotifierProvider.value(value: DBProvider()),
       ],
       child: MyApp(),
     ),

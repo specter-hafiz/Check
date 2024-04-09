@@ -1,10 +1,12 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
+import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreateAttendanceScreen extends StatelessWidget {
   const CreateAttendanceScreen({super.key});
@@ -29,10 +31,6 @@ class CreateAttendanceScreen extends StatelessWidget {
           child: Column(
             children: [
               CreateAttendanceForm(),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 2,
-              ),
-              AdminAttendeeButton(text: setAttendance)
             ],
           ),
         ),
@@ -73,7 +71,20 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
           SizedBox(
             height: SizeConfig.blockSizeVertical! * 2,
           ),
-          PasswordTextField(passwordcontroller: passwordController)
+          PasswordTextField(passwordcontroller: passwordController),
+          SizedBox(
+            height: SizeConfig.blockSizeVertical! * 2,
+          ),
+          AdminAttendeeButton(
+            text: setAttendance,
+            callback: () {
+              Provider.of<DBProvider>(context, listen: false).setAttendance(
+                  titleController.text,
+                  int.parse(numberController.text),
+                  passwordController.text,
+                  context);
+            },
+          )
         ],
       ),
     );

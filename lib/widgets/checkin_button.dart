@@ -1,6 +1,8 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
+import 'package:check/providers/db_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CheckInButton extends StatelessWidget {
   const CheckInButton({
@@ -10,7 +12,10 @@ class CheckInButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Provider.of<DBProvider>(context, listen: false)
+            .signAttendance("Hafiz Huaru", "3393522", context);
+      },
       child: Container(
         alignment: Alignment.center,
         height: 50,

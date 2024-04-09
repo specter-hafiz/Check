@@ -1,14 +1,19 @@
+import 'package:check/screens/admin_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
   Future signUpUser(String email, String password, BuildContext context) async {
     try {
-      final credential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      )
+          .then((value) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => AdminHomeScreen()));
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context)
@@ -29,7 +34,11 @@ class AuthProvider extends ChangeNotifier {
       String emailAddress, String password, BuildContext context) async {
     try {
       final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
+          .signInWithEmailAndPassword(email: emailAddress, password: password)
+          .then((value) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => AdminHomeScreen()));
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context)
