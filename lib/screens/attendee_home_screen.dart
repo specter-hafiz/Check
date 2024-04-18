@@ -1,11 +1,25 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
+import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/checkin_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AttendeeHomeScreen extends StatelessWidget {
-  const AttendeeHomeScreen({super.key});
+  const AttendeeHomeScreen({
+    super.key,
+    required this.user,
+    required this.idNumber,
+    required this.creatorName,
+    required this.docId,
+  });
+  final String user;
+  final String idNumber;
+  final String creatorName;
+  final String docId;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +65,7 @@ class AttendeeHomeScreen extends StatelessWidget {
                 height: SizeConfig.blockSizeHorizontal! * 2,
               ),
               Text(
-                username,
+                "@" + user,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontSize: 30,
                       color: AppColors.whiteText,
@@ -96,7 +110,7 @@ class AttendeeHomeScreen extends StatelessWidget {
                           .copyWith(color: AppColors.blueText, fontSize: 25),
                     ),
                     Text(
-                      username,
+                      "@" + creatorName,
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge!
@@ -115,7 +129,10 @@ class AttendeeHomeScreen extends StatelessWidget {
               SizedBox(
                 height: SizeConfig.blockSizeHorizontal! * 4,
               ),
-              CheckInButton()
+              CheckInButton(
+                callback: () => Provider.of<DBProvider>(context, listen: false)
+                    .signAttendance(user, idNumber, context, docId),
+              )
             ],
           ),
         ),

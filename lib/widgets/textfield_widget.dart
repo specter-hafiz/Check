@@ -20,7 +20,7 @@ class TextFieldWidget extends StatelessWidget {
     return TextFormField(
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return username! ? "Username field required" : "Email field required";
+          return "Field required";
         }
         if (!username!) {
           if (!value.contains(".com")) {

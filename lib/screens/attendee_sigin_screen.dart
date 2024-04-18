@@ -5,6 +5,7 @@ import 'package:check/screens/attendee_home_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/attendee_signin_form.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AttendeeSigninScreen extends StatelessWidget {
   const AttendeeSigninScreen({super.key});
@@ -49,17 +50,6 @@ class AttendeeSigninScreen extends StatelessWidget {
               height: SizeConfig.blockSizeVertical! * 1,
             ),
             AttendeeSignInForm(),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 2,
-            ),
-            AdminAttendeeButton(
-              text: signin,
-              callback: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => AttendeeHomeScreen(),
-                ),
-              ),
-            )
           ]),
         )));
   }

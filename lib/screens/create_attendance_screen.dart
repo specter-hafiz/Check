@@ -5,8 +5,11 @@ import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CreateAttendanceScreen extends StatelessWidget {
   const CreateAttendanceScreen({super.key});
@@ -49,15 +52,27 @@ class CreateAttendanceForm extends StatefulWidget {
 }
 
 class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
+  final TextEditingController creatorNController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
-  final TextEditingController numberController = TextEditingController();
+  final TextEditingController attendeesNController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final _formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formkey,
       child: Column(
         children: [
           TextFieldWidget(
+              username: true,
+              controller: creatorNController,
+              hinttext: "Enter first name",
+              prefixIcon: Icons.person),
+          SizedBox(
+            height: SizeConfig.blockSizeVertical! * 2,
+          ),
+          TextFieldWidget(
+              username: true,
               controller: titleController,
               hinttext: "Title of attendance",
               prefixIcon: Icons.title),
@@ -65,7 +80,8 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
             height: SizeConfig.blockSizeVertical! * 2,
           ),
           TextFieldWidget(
-              controller: numberController,
+              username: true,
+              controller: attendeesNController,
               hinttext: "Number of attendees",
               prefixIcon: Icons.people),
           SizedBox(
@@ -78,11 +94,14 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
           AdminAttendeeButton(
             text: setAttendance,
             callback: () {
-              Provider.of<DBProvider>(context, listen: false).setAttendance(
-                  titleController.text,
-                  int.parse(numberController.text),
-                  passwordController.text,
-                  context);
+              if (_formkey.currentState!.validate()) {
+                Provider.of<DBProvider>(context, listen: false).setAttendance(
+                    titleController.text,
+                    creatorNController.text,
+                    int.parse(attendeesNController.text),
+                    passwordController.text,
+                    context);
+              }
             },
           )
         ],

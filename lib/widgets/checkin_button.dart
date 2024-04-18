@@ -1,21 +1,21 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/providers/db_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CheckInButton extends StatelessWidget {
   const CheckInButton({
     super.key,
+    this.callback,
   });
+  final Function()? callback;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Provider.of<DBProvider>(context, listen: false)
-            .signAttendance("Hafiz Huaru", "3393522", context);
-      },
+      onTap: callback,
       child: Container(
         alignment: Alignment.center,
         height: 50,
