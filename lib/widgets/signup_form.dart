@@ -59,8 +59,11 @@ class _SignUpFormState extends State<SignUpForm> {
                     callback: () {
                       if (_formKey.currentState!.validate()) {
                         Provider.of<AuthProvider>(context, listen: false)
-                            .signUpUser(emailController.text,
-                                passwordController.text, context)
+                            .signUpUser(
+                                usernameController.text,
+                                emailController.text,
+                                passwordController.text,
+                                context)
                             .onError((error, stackTrace) {
                           throw ("Sign up error occured");
                         });

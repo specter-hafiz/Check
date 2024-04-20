@@ -1,11 +1,8 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
-import 'package:check/screens/attendee_home_screen.dart';
-import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/attendee_signin_form.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
 class AttendeeSigninScreen extends StatelessWidget {
   const AttendeeSigninScreen({super.key});

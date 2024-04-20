@@ -3,8 +3,6 @@ import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/checkin_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,11 +13,15 @@ class AttendeeHomeScreen extends StatelessWidget {
     required this.idNumber,
     required this.creatorName,
     required this.docId,
+    required this.userId,
+    required this.password,
   });
   final String user;
   final String idNumber;
   final String creatorName;
   final String docId;
+  final String userId;
+  final String password;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class AttendeeHomeScreen extends StatelessWidget {
               iconColor: AppColors.whiteText,
               itemBuilder: (context) => [
                     PopupMenuItem(
+                      onTap: () async {},
                       child: Text("Logout"),
                       value: "Log",
                     )
@@ -131,7 +134,7 @@ class AttendeeHomeScreen extends StatelessWidget {
               ),
               CheckInButton(
                 callback: () => Provider.of<DBProvider>(context, listen: false)
-                    .signAttendance(user, idNumber, context, docId),
+                    .signAttendance(user, idNumber, context, userId, password),
               )
             ],
           ),

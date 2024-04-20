@@ -1,3 +1,4 @@
+import 'package:check/utilities/dialogs/error_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 class DBProvider extends ChangeNotifier {
-  Future<Position> _determinePosition() async {
+  Future<Position> _determinePosition(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -15,7 +16,8 @@ class DBProvider extends ChangeNotifier {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      return Future.error('Location services are disabled.');
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Location services are disabled.')));
     }
 
     permission = await Geolocator.checkPermission();
@@ -60,15 +62,24 @@ class DBProvider extends ChangeNotifier {
     BuildContext context,
   ) async {
     _checkConnectivity(context);
-    Position creatorPosition = await _determinePosition();
-    GeoPoint creatorLocation =
-        GeoPoint(creatorPosition.latitude, creatorPosition.longitude);
 
+    // Determine the creator's position
+    Position creatorPosition = await _determinePosition(context);
+    GeoPoint creatorLocation = GeoPoint(
+      creatorPosition.latitude,
+      creatorPosition.longitude,
+    );
+
+    // Get the current user
     User user = FirebaseAuth.instance.currentUser!;
     DateTime date = DateTime.now();
+
     try {
-      CollectionReference attendance =
-          FirebaseFirestore.instance.collection("attendance");
+      // Create the attendance document
+      CollectionReference attendance = FirebaseFirestore.instance
+          .collection("attendance")
+          .doc(user.uid)
+          .collection("attendances");
       DocumentReference ref = await attendance.add({
         "user_id": user.uid,
         "creator_name": creatorName,
@@ -78,15 +89,48 @@ class DBProvider extends ChangeNotifier {
         "password": password,
         "created_at": date.toIso8601String(),
       });
+
+      // Update the attendance document with its document ID
       await attendance.doc(ref.id).update({"doc_id": ref.id});
 
+      // Create the corresponding password document
+      DocumentReference passwordDocRef =
+          FirebaseFirestore.instance.collection("passwords").doc();
+      await passwordDocRef.set({
+        "user_id": user.uid,
+        "attendance_password": password,
+        "creator_name": creatorName,
+        "ref_id": ref.id,
+        "doc_id": passwordDocRef.id,
+      });
+
+      // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Attendance setting successful")),
       );
     } catch (e) {
+      // Show an error message if setting attendance fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to set attendance")),
       );
+      print("Error setting attendance: $e");
+    }
+  }
+
+  Future<void> deleteAttendance(
+      BuildContext context, String userId, String docId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("attendance")
+          .doc(userId)
+          .collection("attendances")
+          .doc(docId)
+          .delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Attendance deleted successfully")),
+      );
+    } catch (e) {
+      await showErrorDialog(context, "Attendance deletion unsuccessful");
     }
   }
 
@@ -94,32 +138,68 @@ class DBProvider extends ChangeNotifier {
     String name,
     String idNumber,
     BuildContext context,
-    String docId,
+    String userId,
+    String password,
   ) async {
     _checkConnectivity(context);
+
+    // Determine the creator's position
+    Position creatorPosition = await _determinePosition(context);
+    GeoPoint attendeeLocation = GeoPoint(
+      creatorPosition.latitude,
+      creatorPosition.longitude,
+    );
+
+    // Get the current date and time
     DateTime date = DateTime.now();
-    CollectionReference attendance = FirebaseFirestore.instance
-        .collection("attendance")
-        .doc(docId)
-        .collection("attendancesheet");
 
-    try {
-      DocumentReference ref = await attendance.add({
-        "name": name,
-        "id_number": idNumber,
-        "signed_at": date.toIso8601String(),
-      });
+    // Query the passwords collection to find matching attendance documents
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('passwords')
+        .where('attendance_password', isEqualTo: password)
+        .get();
 
-      await attendance.doc(ref.id).update({
-        "doc_id": ref.id,
-      });
+    // Handle signing attendance for each matching document
+    if (querySnapshot.docs.isNotEmpty) {
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        String refId = documentSnapshot["ref_id"];
+        CollectionReference attendance = FirebaseFirestore.instance
+            .collection("attendance")
+            .doc(userId)
+            .collection("attendances")
+            .doc(refId)
+            .collection("attendancesheet");
 
+        try {
+          // Add a new attendance record
+          DocumentReference ref = await attendance.add({
+            "name": name,
+            "id_number": idNumber,
+            "signed_at": date.toIso8601String(),
+            "location": attendeeLocation,
+          });
+
+          // Update the newly added record with its document ID
+          await attendance.doc(ref.id).update({
+            "doc_id": ref.id,
+          });
+
+          // Show a success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Attendance recorded successfully")),
+          );
+        } catch (e) {
+          // Show an error message if adding the attendance fails
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Failed to record attendance")),
+          );
+          print("Error adding attendance: $e");
+        }
+      }
+    } else {
+      // Show a message if no matching attendance documents are found
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Attendance recorded successfully")),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Failed to record attendance")),
+        SnackBar(content: Text("No matching attendance found")),
       );
     }
   }

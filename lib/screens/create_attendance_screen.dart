@@ -5,11 +5,8 @@ import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
 
 class CreateAttendanceScreen extends StatelessWidget {
   const CreateAttendanceScreen({super.key});

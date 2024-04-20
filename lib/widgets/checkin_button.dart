@@ -1,9 +1,6 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
-import 'package:check/providers/db_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CheckInButton extends StatelessWidget {
   const CheckInButton({

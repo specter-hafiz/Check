@@ -1,13 +1,18 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
+import 'package:check/providers/auth_provider.dart';
 import 'package:check/screens/create_attendance_screen.dart';
 import 'package:check/screens/view_attendance_screen.dart';
+import 'package:check/utilities/dialogs/logout_dialog.dart';
+import 'package:check/utilities/enums/menu_action.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AdminHomeScreen extends StatelessWidget {
-  const AdminHomeScreen({super.key});
+  const AdminHomeScreen({super.key, required this.currentUser});
+  final String currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +33,27 @@ class AdminHomeScreen extends StatelessWidget {
               ),
         ),
         actions: [
-          PopupMenuButton(
+          PopupMenuButton<MenuAction>(
               iconColor: AppColors.whiteText,
+              onSelected: (value) async {
+                switch (value) {
+                  case MenuAction.logout:
+                    final shouldLogout = await logoutDialog(context);
+                    if (shouldLogout) {
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .signUserOut(context);
+                    }
+                }
+              },
               itemBuilder: (context) => [
                     PopupMenuItem(
                       child: Text("Logout"),
-                      value: "Log",
+                      value: MenuAction.logout,
+                      onTap: () async {
+                        await logoutDialog(
+                          context,
+                        );
+                      },
                     )
                   ])
         ],
@@ -56,7 +76,7 @@ class AdminHomeScreen extends StatelessWidget {
                 height: SizeConfig.blockSizeHorizontal! * 2,
               ),
               Text(
-                username,
+                currentUser,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontSize: 30,
                       color: AppColors.whiteText,

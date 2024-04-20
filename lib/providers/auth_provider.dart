@@ -61,17 +61,20 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future signUpUser(String email, String password, BuildContext context) async {
+  Future signUpUser(String username, String email, String password,
+      BuildContext context) async {
     _checkConnectivity(context);
     try {
-      final credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
-      )
-          .then((value) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => AdminHomeScreen()));
+      );
+      User? updateUser = FirebaseAuth.instance.currentUser;
+      updateUser!.updateDisplayName(username).then((value) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => AdminHomeScreen(
+                  currentUser: updateUser.displayName ?? "unknown",
+                )));
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -93,11 +96,15 @@ class AuthProvider extends ChangeNotifier {
       String emailAddress, String password, BuildContext context) async {
     _checkConnectivity(context);
     try {
-      final credential = await FirebaseAuth.instance
+      User? user = FirebaseAuth.instance.currentUser;
+      await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailAddress, password: password)
           .then((value) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => AdminHomeScreen()));
+        if (user != null)
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AdminHomeScreen(
+                    currentUser: user.displayName!,
+                  )));
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
@@ -116,12 +123,21 @@ class AuthProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("An error occurred")));
       }
+    } catch (e) {
+      print("an unknown error occurred");
+      print(e.toString());
     }
   }
 
   Future signUserOut(BuildContext context) async {
     _checkConnectivity(context);
-    await FirebaseAuth.instance.signOut();
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil("/welcome", (route) => false);
+    } catch (e) {
+      print("Failed.Couldn't sign user out");
+    }
   }
 
   Future<void> verifyAttendance(BuildContext context, String password,
@@ -134,13 +150,13 @@ class AuthProvider extends ChangeNotifier {
     // Query Firestore for the attendance record with the provided password
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('attendance')
-          .where('password', isEqualTo: password)
+          .collection('passwords')
+          .where('attendance_password', isEqualTo: password)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
         for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
-          String creatorName = documentSnapshot["creatorName"];
-
+          String creatorName = documentSnapshot["creator_name"];
+          String userId = documentSnapshot["user_id"];
           String docid = documentSnapshot["doc_id"];
           Navigator.push(
               context,
@@ -150,6 +166,8 @@ class AuthProvider extends ChangeNotifier {
                         idNumber: idNumber,
                         creatorName: creatorName,
                         docId: docid,
+                        userId: userId,
+                        password: password,
                       )));
         }
       }

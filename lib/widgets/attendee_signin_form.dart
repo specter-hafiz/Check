@@ -1,7 +1,6 @@
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
-import 'package:check/screens/attendee_home_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
