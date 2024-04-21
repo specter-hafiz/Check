@@ -22,6 +22,7 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
   final TextEditingController idController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,20 +50,34 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 2,
             ),
-            AdminAttendeeButton(
-              text: signin,
-              callback: () {
-                if (_formkey.currentState!.validate()) {
-                  Provider.of<AuthProvider>(context, listen: false)
-                      .verifyAttendance(
-                    context,
-                    passwordController.text,
-                    nameController.text,
-                    idController.text,
-                  );
-                }
-              },
-            )
+            isLoading
+                ? CircularProgressIndicator()
+                : AdminAttendeeButton(
+                    text: signin,
+                    callback: () {
+                      if (_formkey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .verifyAttendance(
+                          context,
+                          passwordController.text,
+                          nameController.text,
+                          idController.text,
+                        )
+                            .then((_) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }).catchError((_) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        });
+                      }
+                    },
+                  )
           ],
         ));
   }

@@ -21,6 +21,7 @@ class _TextFormState extends State<TextForm> {
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -40,14 +41,29 @@ class _TextFormState extends State<TextForm> {
             CheckBox(),
             Text(rememberMe),
           ]),
-          AdminAttendeeButton(
-              text: signin,
-              callback: () {
-                if (_formkey.currentState!.validate()) {
-                  Provider.of<AuthProvider>(context, listen: false).signUserIn(
-                      emailcontroller.text, passwordcontroller.text, context);
-                }
-              }),
+          isLoading
+              ? CircularProgressIndicator()
+              : AdminAttendeeButton(
+                  text: signin,
+                  callback: () {
+                    if (_formkey.currentState!.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .signUserIn(emailcontroller.text,
+                              passwordcontroller.text, context)
+                          .then((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }).catchError((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      });
+                    }
+                  }),
         ]));
   }
 }

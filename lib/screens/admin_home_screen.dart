@@ -43,6 +43,7 @@ class AdminHomeScreen extends StatelessWidget {
                       Provider.of<AuthProvider>(context, listen: false)
                           .signUserOut(context);
                     }
+                    break;
                 }
               },
               itemBuilder: (context) => [

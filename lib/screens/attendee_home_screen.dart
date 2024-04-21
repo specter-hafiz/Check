@@ -2,6 +2,7 @@ import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/db_provider.dart';
+import 'package:check/utilities/enums/menu_action.dart';
 import 'package:check/widgets/checkin_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,13 +40,20 @@ class AttendeeHomeScreen extends StatelessWidget {
               color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
         ),
         actions: [
-          PopupMenuButton(
+          PopupMenuButton<MenuAction>(
               iconColor: AppColors.whiteText,
+              onSelected: (value) {
+                switch (value) {
+                  case MenuAction.logout:
+                    Navigator.of(context).pop();
+                    break;
+                }
+              },
               itemBuilder: (context) => [
                     PopupMenuItem(
                       onTap: () async {},
                       child: Text("Logout"),
-                      value: "Log",
+                      value: MenuAction.logout,
                     )
                   ])
         ],

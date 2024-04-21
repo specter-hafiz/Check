@@ -22,7 +22,7 @@ class _SignUpFormState extends State<SignUpForm> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool isProcessing = false;
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -50,7 +50,7 @@ class _SignUpFormState extends State<SignUpForm> {
               CheckBox(),
               Text(rememberMe),
             ]),
-            isProcessing
+            isLoading
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
@@ -58,14 +58,23 @@ class _SignUpFormState extends State<SignUpForm> {
                     text: "Sign Up",
                     callback: () {
                       if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
                         Provider.of<AuthProvider>(context, listen: false)
                             .signUpUser(
                                 usernameController.text,
                                 emailController.text,
                                 passwordController.text,
                                 context)
-                            .onError((error, stackTrace) {
-                          throw ("Sign up error occured");
+                            .then((_) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }).catchError((_) {
+                          setState(() {
+                            isLoading = false;
+                          });
                         });
                         ;
                       }

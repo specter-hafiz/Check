@@ -75,6 +75,14 @@ class DBProvider extends ChangeNotifier {
     DateTime date = DateTime.now();
 
     try {
+      bool isPasswordUnique = await _isPasswordUnique(password);
+      if (!isPasswordUnique) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text("Password already exists. Please choose another.")),
+        );
+        return;
+      }
       // Create the attendance document
       CollectionReference attendance = FirebaseFirestore.instance
           .collection("attendance")
@@ -171,6 +179,15 @@ class DBProvider extends ChangeNotifier {
             .collection("attendancesheet");
 
         try {
+          bool isIdNumberUnique =
+              await _isIdNumberUniqueInAttendanceSheet(attendance, idNumber);
+          if (!isIdNumberUnique) {
+            // If ID number already exists, show a message and skip signing
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("ID number already signed attendance")),
+            );
+            continue;
+          }
           // Add a new attendance record
           DocumentReference ref = await attendance.add({
             "name": name,
@@ -202,5 +219,38 @@ class DBProvider extends ChangeNotifier {
         SnackBar(content: Text("No matching attendance found")),
       );
     }
+  }
+}
+
+Future<bool> _isPasswordUnique(String password) async {
+  try {
+    // Query the passwords collection to check if the password already exists
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection("passwords")
+        .where("attendance_password", isEqualTo: password)
+        .get();
+
+    // If no documents match the query, then the password is unique
+    return querySnapshot.docs.isEmpty;
+  } catch (e) {
+    // Handle any potential errors, such as network issues or database errors
+    print("Error checking password uniqueness: $e");
+    return false; // Consider it not unique in case of error
+  }
+}
+
+Future<bool> _isIdNumberUniqueInAttendanceSheet(
+    CollectionReference attendance, String idNumber) async {
+  try {
+    // Query the attendance sheet to check if the ID number already exists
+    QuerySnapshot querySnapshot =
+        await attendance.where('id_number', isEqualTo: idNumber).get();
+
+    // If no documents match the query, then the ID number is unique
+    return querySnapshot.docs.isEmpty;
+  } catch (e) {
+    // Handle any potential errors, such as network issues or database errors
+    print("Error checking ID number uniqueness in attendance sheet: $e");
+    return false; // Consider it not unique in case of error
   }
 }

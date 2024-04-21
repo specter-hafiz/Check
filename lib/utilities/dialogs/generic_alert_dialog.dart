@@ -4,7 +4,7 @@ typedef DialogOptionBuilder<T> = Map<String, T?> Function();
 
 Future<T?> showGenericDialog<T>(
     {required BuildContext context,
-    required String title,
+    required Widget? titleWidget,
     required String content,
     required DialogOptionBuilder optionsBuilder}) {
   final options = optionsBuilder();
@@ -12,7 +12,7 @@ Future<T?> showGenericDialog<T>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(title),
+          title: titleWidget,
           content: Text(content),
           actions: options.keys.map((optionTitle) {
             final value = options[optionTitle];

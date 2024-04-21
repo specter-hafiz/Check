@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 Future<void> showErrorDialog(BuildContext context, String errorString) {
   return showGenericDialog(
       context: context,
-      title: "An error occurred",
+      titleWidget: Icon(Icons.error_outline),
       content: errorString,
       optionsBuilder: () => {
             "Ok": null,
