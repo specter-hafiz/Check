@@ -12,37 +12,23 @@ class AdminSignupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Admin Signup Screen"),
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: SizeConfig.blockSizeHorizontal! * 2),
           child: Column(
             children: [
-              Container(
-                height: SizeConfig.screenHeight! * 0.35,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    boxShadow: [BoxShadow(color: Colors.black, blurRadius: 4)],
-                    color: AppColors.whiteText,
-                    borderRadius: BorderRadius.circular(24)),
-                child:
-                    Image(image: AssetImage("assets/images/signup_admin.jpg")),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 1,
+              Text(
+                admin,
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               Text(
-                createNAcct,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: AppColors.whiteText),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 1,
+                signuptocontinue,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
               ),
               SignUpForm(),
               SizedBox(height: SizeConfig.blockSizeVertical! * 2),

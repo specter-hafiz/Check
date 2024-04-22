@@ -26,44 +26,47 @@ class _TextFormState extends State<TextForm> {
   Widget build(BuildContext context) {
     return Form(
         key: _formkey,
-        child: Column(children: [
-          TextFieldWidget(
-            username: false,
-            controller: emailcontroller,
-            hinttext: "Email",
-            prefixIcon: Icons.mail,
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical! * 1.2),
-          PasswordTextField(
-            passwordcontroller: passwordcontroller,
-          ),
-          Row(children: [
-            CheckBox(),
-            Text(rememberMe),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            TextFieldWidget(
+              username: false,
+              controller: emailcontroller,
+              hinttext: "Email",
+              prefixIcon: Icons.mail,
+            ),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 1.2),
+            PasswordTextField(
+              passwordcontroller: passwordcontroller,
+            ),
+            Row(children: [
+              CheckBox(),
+              Text(rememberMe),
+            ]),
+            isLoading
+                ? CircularProgressIndicator()
+                : AdminAttendeeButton(
+                    text: signin,
+                    callback: () {
+                      if (_formkey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .signUserIn(emailcontroller.text,
+                                passwordcontroller.text, context)
+                            .then((_) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }).catchError((_) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                        });
+                      }
+                    }),
           ]),
-          isLoading
-              ? CircularProgressIndicator()
-              : AdminAttendeeButton(
-                  text: signin,
-                  callback: () {
-                    if (_formkey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      Provider.of<AuthProvider>(context, listen: false)
-                          .signUserIn(emailcontroller.text,
-                              passwordcontroller.text, context)
-                          .then((_) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }).catchError((_) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      });
-                    }
-                  }),
-        ]));
+        ));
   }
 }

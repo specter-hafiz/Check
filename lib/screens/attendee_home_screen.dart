@@ -122,10 +122,10 @@ class AttendeeHomeScreen extends StatelessWidget {
                     ),
                     Text(
                       "@" + creatorName,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(fontSize: 30, fontWeight: FontWeight.w800),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black),
                     ),
                     Text(
                       titleMeeting,

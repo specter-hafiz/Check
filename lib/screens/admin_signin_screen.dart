@@ -14,81 +14,66 @@ class AdminSigninScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Admin Signin Screen"),
-      ),
+      appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal! * 2),
-          child: Column(
-            children: [
-              Container(
-                height: SizeConfig.screenHeight! * 0.35,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    boxShadow: [BoxShadow(color: Colors.black, blurRadius: 4)],
-                    color: AppColors.whiteText,
-                    borderRadius: BorderRadius.circular(24)),
-                child:
-                    Image(image: AssetImage("assets/images/signin_admin.jpg")),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 1,
-              ),
-              Text(
-                logintoacct,
+        child: Column(
+          children: [
+            Text(
+              admin,
+              style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            Text(
+              signinToContinue,
+              style:
+                  Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20),
+            ),
+            TextForm(),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+            RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                  text: "Forgot password?",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: Colors.black)),
+              TextSpan(
+                text: " Click here",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: AppColors.whiteText, fontWeight: FontWeight.bold),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ForgotPasswordScreen()));
+                  },
+              )
+            ])),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+            RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                  text: "Don't have account yet?",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: AppColors.whiteText)),
+              TextSpan(
+                text: " Sign Up",
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
-                    .copyWith(color: AppColors.whiteText),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 1,
-              ),
-              TextForm(),
-              SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: "Forgot password?",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.black)),
-                TextSpan(
-                  text: " Click here",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: AppColors.whiteText, fontWeight: FontWeight.bold),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => ForgotPasswordScreen()));
-                    },
-                )
-              ])),
-              SizedBox(height: SizeConfig.blockSizeVertical! * 2),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                    text: "Don't have account yet?",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(color: AppColors.whiteText)),
-                TextSpan(
-                  text: " Sign Up",
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => AdminSignupScreen()));
-                    },
-                )
-              ]))
-            ],
-          ),
+                    .copyWith(color: Colors.black, fontWeight: FontWeight.bold),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => AdminSignupScreen()));
+                  },
+              )
+            ]))
+          ],
         ),
       ),
     );

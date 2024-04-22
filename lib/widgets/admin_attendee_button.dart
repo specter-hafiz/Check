@@ -14,16 +14,20 @@ class AdminAttendeeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: callback,
-      child: Container(
-        alignment: Alignment.center,
-        height: 50,
-        width: double.infinity,
-        child: Text(text,
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                fontWeight: FontWeight.bold, color: AppColors.blueText)),
-        decoration: BoxDecoration(boxShadow: [
-          BoxShadow(color: Colors.black, blurRadius: 3, offset: Offset(0, 3))
-        ], borderRadius: BorderRadius.circular(24), color: AppColors.whiteText),
+      child: Card(
+        elevation: 5,
+        child: Container(
+          alignment: Alignment.center,
+          height: 50,
+          width: double.infinity,
+          child: Text(text,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  fontWeight: FontWeight.bold, color: AppColors.blueText)),
+          decoration: BoxDecoration(
+              boxShadow: [],
+              borderRadius: BorderRadius.circular(12),
+              color: AppColors.whiteText),
+        ),
       ),
     );
   }

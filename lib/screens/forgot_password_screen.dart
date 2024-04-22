@@ -1,4 +1,3 @@
-import 'package:check/components/colors.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/screens/reset_password_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
@@ -14,26 +13,25 @@ class ForgotPasswordScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Forgot Password Screen"),
+        titleSpacing: 0,
+        title: Text(
+          "Forgot Password",
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: SizeConfig.blockSizeHorizontal! * 2),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                height: SizeConfig.screenHeight! * 0.35,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    boxShadow: [BoxShadow(color: Colors.black, blurRadius: 7)],
-                    color: AppColors.whiteText,
-                    borderRadius: BorderRadius.circular(24)),
-                child: Image(
-                    image: AssetImage("assets/images/forgot_password.jpg")),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 2,
+              Text(
+                "Enter your email below.\nA reset password link will be sent to you shortly",
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
               ),
               ForgotPasswordForm(),
               SizedBox(
