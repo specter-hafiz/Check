@@ -35,6 +35,9 @@ class MyApp extends StatelessWidget {
           bodyLarge:
               TextStyle(fontFamily: "Poppins", color: AppColors.whiteText),
           titleLarge: TextStyle(fontFamily: "Poppins"),
+          bodyMedium: TextStyle(
+            fontFamily: "Poppins",
+          ),
           displayLarge:
               TextStyle(fontFamily: "Poppins", color: AppColors.whiteText),
         ),

@@ -12,29 +12,30 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-
+    final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(
-            left: SizeConfig.blockSizeHorizontal! * 2,
-            right: SizeConfig.blockSizeHorizontal! * 2,
-            top: SizeConfig.blockSizeVertical! * 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: SizeConfig.blockSizeHorizontal! * 2,
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            orientation == Orientation.portrait
+                ? SizedBox(height: SizeConfig.blockSizeHorizontal! * 60)
+                : SizedBox(height: SizeConfig.blockSizeHorizontal! * 5),
             Text(welcome,
                 style: Theme.of(context).textTheme.displayLarge!.copyWith(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
                     color: AppColors.whiteText)),
             SizedBox(
-              height: 8,
+              height: SizeConfig.blockSizeHorizontal! * 3,
             ),
             Text(selectRole,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     fontWeight: FontWeight.normal, color: AppColors.whiteText)),
             SizedBox(
-              height: 8,
+              height: SizeConfig.blockSizeHorizontal! * 3,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

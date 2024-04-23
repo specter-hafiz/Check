@@ -13,25 +13,30 @@ class AdminSigninScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
+    final orientation = MediaQuery.of(context).orientation;
+
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            if (orientation == Orientation.portrait)
+              SizedBox(height: SizeConfig.blockSizeHorizontal! * 25),
             Text(
               admin,
               style: Theme.of(context).textTheme.displayLarge!.copyWith(
                     fontSize: 40,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
             Text(
               signinToContinue,
-              style:
-                  Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 20),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontSize: 20, color: AppColors.whiteText),
             ),
             TextForm(),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
             RichText(
                 text: TextSpan(children: [
               TextSpan(
@@ -51,7 +56,7 @@ class AdminSigninScreen extends StatelessWidget {
                   },
               )
             ])),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 1.5),
             RichText(
                 text: TextSpan(children: [
               TextSpan(

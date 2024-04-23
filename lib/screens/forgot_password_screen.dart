@@ -1,3 +1,4 @@
+import 'package:check/components/colors.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/screens/reset_password_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
@@ -31,17 +32,12 @@ class ForgotPasswordScreen extends StatelessWidget {
             children: [
               Text(
                 "Enter your email below.\nA reset password link will be sent to you shortly",
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(fontSize: 15, color: AppColors.whiteText),
               ),
               ForgotPasswordForm(),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical! * 2,
-              ),
-              AdminAttendeeButton(
-                text: "Verify",
-                callback: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ResetPasswordScreen())),
-              )
             ],
           ),
         ),
@@ -64,7 +60,22 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   @override
   Widget build(BuildContext context) {
     return Form(
-        child: TextFieldWidget(
-            controller: controller, hinttext: "Email", prefixIcon: Icons.mail));
+        child: Column(
+      children: [
+        SizedBox(
+          height: SizeConfig.blockSizeVertical! * 1.5,
+        ),
+        TextFieldWidget(
+            controller: controller, hinttext: "Email", prefixIcon: Icons.mail),
+        SizedBox(
+          height: SizeConfig.blockSizeVertical! * 1.5,
+        ),
+        AdminAttendeeButton(
+          text: "Verify",
+          callback: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => ResetPasswordScreen())),
+        )
+      ],
+    ));
   }
 }

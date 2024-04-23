@@ -1,5 +1,4 @@
 import 'package:check/config/size_config.dart';
-import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/reset_password_form.dart';
 import 'package:flutter/material.dart';
 
@@ -27,8 +26,6 @@ class ResetPasswordScreen extends StatelessWidget {
           child: Column(
             children: [
               ResetPasswordForm(),
-              SizedBox(height: SizeConfig.blockSizeVertical! * 4),
-              AdminAttendeeButton(text: "Confirm")
             ],
           ),
         ),

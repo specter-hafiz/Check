@@ -8,19 +8,29 @@ class TextFieldWidget extends StatelessWidget {
     required this.hinttext,
     required this.prefixIcon,
     this.username,
+    this.onfieldSubmitted,
+    this.focusNode,
   });
 
   final TextEditingController controller;
   final String hinttext;
   final IconData prefixIcon;
   final bool? username;
+  final FocusNode? focusNode;
+  final Function(String)? onfieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: focusNode,
+      onFieldSubmitted: onfieldSubmitted,
+      textInputAction: TextInputAction.next,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return "Field required";
+        }
+        if (value.length < 2) {
+          return "Enter more than one character";
         }
         if (!username!) {
           if (!value.contains(".com")) {

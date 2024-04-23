@@ -26,7 +26,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
     return TextFormField(
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return "Password field required";
+          return "Field required";
         }
 
         return null;
@@ -37,6 +37,8 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       cursorColor: AppColors.blueText,
       obscureText: passwordVisible,
       decoration: InputDecoration(
+          labelStyle:
+              Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 15),
           suffixIcon: IconButton(
               color: AppColors.blueText,
               onPressed: () {

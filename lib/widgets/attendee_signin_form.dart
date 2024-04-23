@@ -1,3 +1,4 @@
+import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
@@ -23,14 +24,49 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
   final TextEditingController passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   bool isLoading = false;
+  FocusNode idFNode = FocusNode();
+  FocusNode passwordFNode = FocusNode();
+  @override
+  void dispose() {
+    nameController.dispose();
+    idController.dispose();
+    passwordController.dispose();
+    idFNode.dispose();
+    passwordFNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final orientation = MediaQuery.of(context).orientation;
+
     return Form(
         key: _formkey,
         child: Column(
           children: [
+            if (orientation == Orientation.portrait)
+              SizedBox(height: SizeConfig.blockSizeHorizontal! * 25),
+            Text(
+              attendee,
+              style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                    fontSize: 40,
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            Text(
+              signinToContinue,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontSize: 20, color: AppColors.whiteText),
+            ),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical! * 1,
+            ),
             TextFieldWidget(
+                onfieldSubmitted: (_) {
+                  FocusScope.of(context).requestFocus(idFNode);
+                },
                 username: true,
                 controller: nameController,
                 hinttext: "Name",
@@ -39,6 +75,7 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
               height: SizeConfig.blockSizeVertical! * 1,
             ),
             TextFieldWidget(
+                focusNode: idFNode,
                 username: true,
                 controller: idController,
                 hinttext: "Id number",
@@ -48,10 +85,12 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             ),
             PasswordTextField(passwordcontroller: passwordController),
             SizedBox(
-              height: SizeConfig.blockSizeVertical! * 2,
+              height: SizeConfig.blockSizeVertical! * 1,
             ),
             isLoading
-                ? CircularProgressIndicator()
+                ? CircularProgressIndicator(
+                    color: AppColors.whiteText,
+                  )
                 : AdminAttendeeButton(
                     text: signin,
                     callback: () {
@@ -65,12 +104,11 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
                           passwordController.text,
                           nameController.text,
                           idController.text,
+                          nameController,
+                          idController,
+                          passwordController,
                         )
                             .then((_) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }).catchError((_) {
                           setState(() {
                             isLoading = false;
                           });

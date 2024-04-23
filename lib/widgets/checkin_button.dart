@@ -30,7 +30,7 @@ class CheckInButton extends StatelessWidget {
           ],
         ),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(16),
             color: AppColors.whiteText),
       ),
     );

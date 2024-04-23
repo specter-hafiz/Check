@@ -175,8 +175,15 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> verifyAttendance(BuildContext context, String password,
-      String user, String idNumber) async {
+  Future<void> verifyAttendance(
+    BuildContext context,
+    String password,
+    String user,
+    String idNumber,
+    TextEditingController namecontroller,
+    TextEditingController idcontroller,
+    TextEditingController passwordcontroller,
+  ) async {
     // Check if location service is enabled for the attendee
 
     // Query Firestore for the attendance record with the provided password
@@ -212,11 +219,16 @@ class AuthProvider extends ChangeNotifier {
               ),
             ),
           );
+          namecontroller.clear();
+          idcontroller.clear();
+          passwordcontroller.clear();
         }
       } else {
         // Attendance not found
-        await showErrorDialog(
-            context, 'Wrong password or Attendance sheet does not exist');
+        await showMessageDialog(
+            context,
+            'Wrong password or Attendance sheet does not exist',
+            Icon(Icons.info));
       }
     } on FirebaseException catch (e) {
       if (e.code == 'unavailable') {

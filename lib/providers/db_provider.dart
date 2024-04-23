@@ -16,8 +16,8 @@ class DBProvider extends ChangeNotifier {
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Location services are disabled.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Enable location services to sign attendance.')));
     }
 
     permission = await Geolocator.checkPermission();
@@ -134,11 +134,13 @@ class DBProvider extends ChangeNotifier {
           .collection("attendances")
           .doc(docId)
           .delete();
+      //delete the corresponding password in the passwords table
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Attendance deleted successfully")),
       );
     } catch (e) {
-      await showErrorDialog(context, "Attendance deletion unsuccessful");
+      await showMessageDialog(
+          context, "Attendance deletion unsuccessful", Icon(Icons.error));
     }
   }
 
@@ -183,8 +185,10 @@ class DBProvider extends ChangeNotifier {
               await _isIdNumberUniqueInAttendanceSheet(attendance, idNumber);
           if (!isIdNumberUnique) {
             // If ID number already exists, show a message and skip signing
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("ID number already signed attendance")),
+            await showMessageDialog(
+              context,
+              "ID number already signed attendance",
+              Icon(Icons.info),
             );
             continue;
           }
@@ -202,21 +206,23 @@ class DBProvider extends ChangeNotifier {
           });
 
           // Show a success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Attendance recorded successfully")),
+          await showMessageDialog(
+            context,
+            "Attendance recorded successfully",
+            Icon(Icons.info),
           );
         } catch (e) {
           // Show an error message if adding the attendance fails
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Failed to record attendance")),
-          );
-          print("Error adding attendance: $e");
+          await showMessageDialog(
+              context, "Failed to record attendance", Icon(Icons.error));
         }
       }
     } else {
       // Show a message if no matching attendance documents are found
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("No matching attendance found")),
+      await showMessageDialog(
+        context,
+        "No matching attendance found",
+        Icon(Icons.info),
       );
     }
   }
