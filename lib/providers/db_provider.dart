@@ -311,9 +311,12 @@ class DBProvider extends ChangeNotifier {
         // Save Excel file
         var dir = await getExternalStorageDirectory();
         var filePath = '${dir!.path}/attendees.xlsx';
-
+        sheet.autoFitColumn(1);
+        sheet.autoFitColumn(2);
+        sheet.autoFitColumn(3);
         final List<int> bytes = workbook.saveAsStream();
         File(filePath).writeAsBytes(bytes);
+        workbook.dispose();
         showSuccessMessage(
             context, 'Excel file created successfully!', "Success");
 
