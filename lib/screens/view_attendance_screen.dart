@@ -1,5 +1,6 @@
 import 'package:check/providers/db_provider.dart';
 import 'package:check/screens/detail_attendance_screen.dart';
+import 'package:check/utilities/dialogs/delete_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,6 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
           descending: true,
         )
         .snapshots();
-
     return Scaffold(
         appBar: AppBar(
           title: const Text("View Attendance"),
@@ -70,10 +70,14 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
                     title: Text(data["title"]),
                     subtitle: Text(formatedDated + "," + formatedTime),
                     trailing: IconButton(
-                        onPressed: () {
-                          Provider.of<DBProvider>(context, listen: false)
-                              .deleteAttendance(
-                                  context, data["user_id"], data["doc_id"]);
+                        onPressed: () async {
+                          bool isDeleted = await deleteDialog(
+                              context, "Attendance Deletion");
+                          if (isDeleted) {
+                            Provider.of<DBProvider>(context, listen: false)
+                                .deleteAttendance(context, data["user_id"],
+                                    data["doc_id"], data["password_doc_id"]);
+                          }
                         },
                         icon: Icon(Icons.delete)),
                   ),

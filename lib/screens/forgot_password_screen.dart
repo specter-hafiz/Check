@@ -66,7 +66,11 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
           height: SizeConfig.blockSizeVertical! * 1.5,
         ),
         TextFieldWidget(
-            controller: controller, hinttext: "Email", prefixIcon: Icons.mail),
+          controller: controller,
+          hinttext: "Email",
+          prefixIcon: Icons.mail,
+          readOnly: false,
+        ),
         SizedBox(
           height: SizeConfig.blockSizeVertical! * 1.5,
         ),

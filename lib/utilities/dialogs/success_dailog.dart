@@ -2,13 +2,13 @@ import 'package:check/components/colors.dart';
 import 'package:check/utilities/dialogs/generic_alert_dialog.dart';
 import 'package:flutter/material.dart';
 
-Future<void> showErrorMessage(
+Future<void> showSuccessMessage(
     BuildContext context, String message, String title) {
   return showGenericDialog(
       isDimissible: true,
       context: context,
       icon: Icon(
-        Icons.error_outline,
+        Icons.check,
         color: AppColors.blueText,
       ),
       title: title,

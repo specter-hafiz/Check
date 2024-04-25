@@ -64,22 +64,26 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
               height: SizeConfig.blockSizeVertical! * 1,
             ),
             TextFieldWidget(
-                onfieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(idFNode);
-                },
-                username: true,
-                controller: nameController,
-                hinttext: "Name",
-                prefixIcon: Icons.person),
+              onfieldSubmitted: (_) {
+                FocusScope.of(context).requestFocus(idFNode);
+              },
+              username: true,
+              controller: nameController,
+              hinttext: "Name",
+              prefixIcon: Icons.person,
+              readOnly: false,
+            ),
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 1,
             ),
             TextFieldWidget(
-                focusNode: idFNode,
-                username: true,
-                controller: idController,
-                hinttext: "Id number",
-                prefixIcon: Icons.badge),
+              focusNode: idFNode,
+              username: true,
+              controller: idController,
+              hinttext: "Id number",
+              prefixIcon: Icons.badge,
+              readOnly: false,
+            ),
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 1,
             ),

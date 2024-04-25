@@ -1,9 +1,15 @@
+import 'dart:io';
+import 'package:open_file/open_file.dart';
+import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 import 'package:check/utilities/dialogs/error_dialog.dart';
+import 'package:check/utilities/dialogs/success_dailog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:excel/excel.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DBProvider extends ChangeNotifier {
   Future<Position> _determinePosition(BuildContext context) async {
@@ -57,9 +63,10 @@ class DBProvider extends ChangeNotifier {
   Future<void> setAttendance(
     String title,
     String creatorName,
-    int attendeesN,
     String password,
     BuildContext context,
+    TextEditingController titleController,
+    TextEditingController passwordController,
   ) async {
     _checkConnectivity(context);
 
@@ -90,16 +97,15 @@ class DBProvider extends ChangeNotifier {
           .collection("attendances");
       DocumentReference ref = await attendance.add({
         "user_id": user.uid,
+        "is_active": true,
         "creator_name": creatorName,
         "title": title,
         "creator_loc": creatorLocation,
-        "number": attendeesN,
         "password": password,
         "created_at": date.toIso8601String(),
       });
 
       // Update the attendance document with its document ID
-      await attendance.doc(ref.id).update({"doc_id": ref.id});
 
       // Create the corresponding password document
       DocumentReference passwordDocRef =
@@ -111,11 +117,17 @@ class DBProvider extends ChangeNotifier {
         "ref_id": ref.id,
         "doc_id": passwordDocRef.id,
       });
+      await attendance.doc(ref.id).update({
+        "doc_id": ref.id,
+        "password_doc_id": passwordDocRef.id,
+      });
 
       // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Attendance setting successful")),
       );
+      titleController.clear();
+      passwordController.clear();
     } catch (e) {
       // Show an error message if setting attendance fails
       ScaffoldMessenger.of(context).showSnackBar(
@@ -125,8 +137,8 @@ class DBProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteAttendance(
-      BuildContext context, String userId, String docId) async {
+  Future<void> deleteAttendance(BuildContext context, String userId,
+      String docId, String passwordId) async {
     try {
       await FirebaseFirestore.instance
           .collection("attendance")
@@ -134,13 +146,16 @@ class DBProvider extends ChangeNotifier {
           .collection("attendances")
           .doc(docId)
           .delete();
+      await FirebaseFirestore.instance
+          .collection("passwords")
+          .doc(passwordId)
+          .delete();
       //delete the corresponding password in the passwords table
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Attendance deleted successfully")),
-      );
+      await showSuccessMessage(
+          context, "Attendance deleted successfully", "Attendance Sheet");
     } catch (e) {
-      await showMessageDialog(
-          context, "Attendance deletion unsuccessful", Icon(Icons.error));
+      await showErrorMessage(
+          context, "Attendance deletion unsuccessful", "Attendance Sheet");
     }
   }
 
@@ -173,22 +188,34 @@ class DBProvider extends ChangeNotifier {
     if (querySnapshot.docs.isNotEmpty) {
       for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
         String refId = documentSnapshot["ref_id"];
-        CollectionReference attendance = FirebaseFirestore.instance
+        final docRef = FirebaseFirestore.instance
             .collection("attendance")
             .doc(userId)
             .collection("attendances")
-            .doc(refId)
-            .collection("attendancesheet");
-
+            .doc(refId);
+        CollectionReference attendance = docRef.collection("attendancesheet");
+        DocumentSnapshot attendanceDoc = await docRef.get();
+        if (attendanceDoc.exists) {
+          bool isAttendanceOpen = attendanceDoc["is_active"];
+          if (!isAttendanceOpen) {
+            await showErrorMessage(
+              context,
+              "Attendance is currently closed",
+              "Attendance Sheet",
+            );
+            continue;
+          }
+          ;
+        }
         try {
           bool isIdNumberUnique =
               await _isIdNumberUniqueInAttendanceSheet(attendance, idNumber);
           if (!isIdNumberUnique) {
             // If ID number already exists, show a message and skip signing
-            await showMessageDialog(
+            await showErrorMessage(
               context,
               "ID number already signed attendance",
-              Icon(Icons.info),
+              "Attendance Sheet",
             );
             continue;
           }
@@ -206,57 +233,131 @@ class DBProvider extends ChangeNotifier {
           });
 
           // Show a success message
-          await showMessageDialog(
+          await showErrorMessage(
             context,
             "Attendance recorded successfully",
-            Icon(Icons.info),
+            "Attendance Sheet",
           );
         } catch (e) {
           // Show an error message if adding the attendance fails
-          await showMessageDialog(
-              context, "Failed to record attendance", Icon(Icons.error));
+          await showErrorMessage(
+              context, "Failed to record attendance", "Attendance Sheet");
         }
       }
     } else {
       // Show a message if no matching attendance documents are found
-      await showMessageDialog(
+      await showErrorMessage(
         context,
-        "No matching attendance found",
-        Icon(Icons.info),
+        "Attendance sheet not found",
+        "Attendance Sheet",
       );
     }
   }
-}
 
-Future<bool> _isPasswordUnique(String password) async {
-  try {
-    // Query the passwords collection to check if the password already exists
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection("passwords")
-        .where("attendance_password", isEqualTo: password)
-        .get();
-
-    // If no documents match the query, then the password is unique
-    return querySnapshot.docs.isEmpty;
-  } catch (e) {
-    // Handle any potential errors, such as network issues or database errors
-    print("Error checking password uniqueness: $e");
-    return false; // Consider it not unique in case of error
+  Future<void> openOrCloseDB(
+      BuildContext context, DocumentReference document, bool isActive) async {
+    try {
+      document.update({
+        "is_active": isActive,
+      });
+      showSuccessMessage(
+          context,
+          "Attendance sheet ${isActive ? "opened" : "closed"}",
+          "Attendance Sheet");
+    } catch (e) {
+      await showErrorMessage(
+          context, "Failed to close attendance sheet", "Attendance Sheet");
+    }
   }
-}
 
-Future<bool> _isIdNumberUniqueInAttendanceSheet(
-    CollectionReference attendance, String idNumber) async {
-  try {
-    // Query the attendance sheet to check if the ID number already exists
-    QuerySnapshot querySnapshot =
-        await attendance.where('id_number', isEqualTo: idNumber).get();
+  Future<void> exportToExcel(
+      BuildContext context, DocumentReference document) async {
+    try {
+      QuerySnapshot snapshot =
+          await document.collection('attendancesheet').get();
+      if (snapshot.docs.isNotEmpty) {
+        List<Map<String, dynamic>> attendeesData = [];
 
-    // If no documents match the query, then the ID number is unique
-    return querySnapshot.docs.isEmpty;
-  } catch (e) {
-    // Handle any potential errors, such as network issues or database errors
-    print("Error checking ID number uniqueness in attendance sheet: $e");
-    return false; // Consider it not unique in case of error
+        snapshot.docs.forEach((doc) {
+          Map<String, dynamic>? attendee = doc.data() as Map<String, dynamic>?;
+          if (attendee != null) {
+            attendeesData.add(attendee);
+          }
+        });
+
+        // Create an Excel workbook
+        Workbook workbook = Workbook();
+
+        // Add a worksheet
+        var sheet = workbook.worksheets[0];
+
+        // Add headers
+        var headers = ['Name', 'ID Number', 'Signed At', 'Location'];
+        for (var i = 0; i < headers.length; i++) {
+          sheet.getRangeByIndex(1, i + 1).setText(headers[i]);
+        }
+
+        // Add data
+        for (var i = 0; i < attendeesData.length; i++) {
+          var attendee = attendeesData[i];
+          sheet.getRangeByIndex(i + 2, 1).setText(attendee['name']);
+          sheet.getRangeByIndex(i + 2, 2).setText(attendee['id_number']);
+          sheet.getRangeByIndex(i + 2, 3).setText(attendee['signed_at']);
+          sheet
+              .getRangeByIndex(i + 2, 4)
+              .setText(attendee['location'].toString());
+        }
+
+        // Save Excel file
+        var dir = await getExternalStorageDirectory();
+        var filePath = '${dir!.path}/attendees.xlsx';
+
+        final List<int> bytes = workbook.saveAsStream();
+        File(filePath).writeAsBytes(bytes);
+        showSuccessMessage(
+            context, 'Excel file created successfully!', "Success");
+
+        // Open the file
+        OpenFile.open(filePath);
+      } else {
+        showErrorMessage(
+            context, 'You cannot export an empty attendance sheet', "Error");
+      }
+    } catch (e) {
+      showErrorMessage(context, 'Failed to export to Excel: $e', "Error");
+    }
+  }
+
+  Future<bool> _isPasswordUnique(String password) async {
+    try {
+      // Query the passwords collection to check if the password already exists
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("passwords")
+          .where("attendance_password", isEqualTo: password)
+          .get();
+
+      // If no documents match the query, then the password is unique
+      return querySnapshot.docs.isEmpty;
+    } catch (e) {
+      // Handle any potential errors, such as network issues or database errors
+      print("Error checking password uniqueness: $e");
+      return false; // Consider it not unique in case of error
+    }
+  }
+
+  Future<bool> _isIdNumberUniqueInAttendanceSheet(
+      CollectionReference attendance, String idNumber) async {
+    try {
+      // Query the attendance sheet to check if the ID number already exists
+      QuerySnapshot querySnapshot =
+          await attendance.where('id_number', isEqualTo: idNumber).get();
+
+      // If no documents match the query, then the ID number is unique
+      return querySnapshot.docs.isEmpty;
+    } catch (e) {
+      // Handle any potential errors, such as network issues or database errors
+      print("Error checking ID number uniqueness in attendance sheet: $e");
+      return false; // Consider it not unique in case of error
+    }
   }
 }

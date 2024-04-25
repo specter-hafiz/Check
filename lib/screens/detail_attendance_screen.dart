@@ -1,8 +1,10 @@
 import 'dart:math';
+import 'package:check/providers/db_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class DetailAttendanceScreen extends StatefulWidget {
   const DetailAttendanceScreen({
@@ -41,20 +43,39 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
     return degrees * (pi / 180);
   }
 
+  bool switchValue = true;
+
   @override
   Widget build(BuildContext context) {
     User currentUser = FirebaseAuth.instance.currentUser!;
-
-    final Stream<QuerySnapshot> _attendeesStream = FirebaseFirestore.instance
+    final document = FirebaseFirestore.instance
         .collection('attendance')
         .doc(currentUser.uid)
         .collection("attendances")
-        .doc(widget.docId)
-        .collection("attendancesheet")
-        .snapshots();
+        .doc(widget.docId);
+    final Stream<QuerySnapshot> _attendeesStream =
+        document.collection("attendancesheet").snapshots();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Attendees"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Provider.of<DBProvider>(context, listen: false)
+                    .exportToExcel(context, document);
+              },
+              icon: Icon(Icons.download)),
+          Switch(
+              activeColor: Colors.red,
+              value: switchValue,
+              onChanged: (bool newValue) {
+                setState(() {
+                  switchValue = newValue;
+                });
+                Provider.of<DBProvider>(context, listen: false)
+                    .openOrCloseDB(context, document, newValue);
+              })
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _attendeesStream,

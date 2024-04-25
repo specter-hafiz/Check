@@ -30,18 +30,22 @@ class _SignUpFormState extends State<SignUpForm> {
         child: Column(
           children: [
             TextFieldWidget(
-                username: true,
-                controller: usernameController,
-                hinttext: "Username",
-                prefixIcon: Icons.person),
+              username: true,
+              controller: usernameController,
+              hinttext: "Username",
+              prefixIcon: Icons.person,
+              readOnly: false,
+            ),
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 1.2,
             ),
             TextFieldWidget(
-                username: false,
-                controller: emailController,
-                hinttext: "Email",
-                prefixIcon: Icons.mail),
+              username: false,
+              controller: emailController,
+              hinttext: "Email",
+              prefixIcon: Icons.mail,
+              readOnly: false,
+            ),
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 1.2,
             ),
@@ -63,9 +67,9 @@ class _SignUpFormState extends State<SignUpForm> {
                         });
                         Provider.of<AuthProvider>(context, listen: false)
                             .signUpUser(
-                                usernameController.text,
-                                emailController.text,
-                                passwordController.text,
+                                usernameController.text.trim(),
+                                emailController.text.trim(),
+                                passwordController.text.trim(),
                                 context)
                             .then((_) {
                           setState(() {

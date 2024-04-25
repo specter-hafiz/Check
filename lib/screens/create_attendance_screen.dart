@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CreateAttendanceScreen extends StatelessWidget {
-  const CreateAttendanceScreen({super.key});
+  const CreateAttendanceScreen({super.key, required this.username});
+  final String username;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,9 @@ class CreateAttendanceScreen extends StatelessWidget {
               horizontal: SizeConfig.blockSizeHorizontal! * 2),
           child: Column(
             children: [
-              CreateAttendanceForm(),
+              CreateAttendanceForm(
+                username: username,
+              ),
             ],
           ),
         ),
@@ -42,7 +45,9 @@ class CreateAttendanceScreen extends StatelessWidget {
 class CreateAttendanceForm extends StatefulWidget {
   const CreateAttendanceForm({
     super.key,
+    required this.username,
   });
+  final String username;
 
   @override
   State<CreateAttendanceForm> createState() => _CreateAttendanceFormState();
@@ -51,9 +56,16 @@ class CreateAttendanceForm extends StatefulWidget {
 class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
   final TextEditingController creatorNController = TextEditingController();
   final TextEditingController titleController = TextEditingController();
-  final TextEditingController attendeesNController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final _formkey = GlobalKey<FormState>();
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    creatorNController.text = widget.username;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -61,46 +73,63 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
       child: Column(
         children: [
           TextFieldWidget(
-              username: true,
-              controller: creatorNController,
-              hinttext: "Enter first name",
-              prefixIcon: Icons.person),
+            username: true,
+            controller: creatorNController,
+            hinttext: "Enter first name",
+            prefixIcon: Icons.person,
+            readOnly: true,
+          ),
           SizedBox(
-            height: SizeConfig.blockSizeVertical! * 2,
+            height: SizeConfig.blockSizeVertical! * 1,
           ),
           TextFieldWidget(
-              username: true,
-              controller: titleController,
-              hinttext: "Title of attendance",
-              prefixIcon: Icons.title),
-          SizedBox(
-            height: SizeConfig.blockSizeVertical! * 2,
+            username: true,
+            controller: titleController,
+            hinttext: "Title of attendance",
+            prefixIcon: Icons.title,
+            readOnly: false,
           ),
-          TextFieldWidget(
-              username: true,
-              controller: attendeesNController,
-              hinttext: "Number of attendees",
-              prefixIcon: Icons.people),
           SizedBox(
-            height: SizeConfig.blockSizeVertical! * 2,
+            height: SizeConfig.blockSizeVertical! * 1,
           ),
-          PasswordTextField(passwordcontroller: passwordController),
+          PasswordTextField(
+            passwordcontroller: passwordController,
+            hintText: "Password to attendance",
+          ),
           SizedBox(
-            height: SizeConfig.blockSizeVertical! * 2,
+            height: SizeConfig.blockSizeVertical! * 1,
           ),
-          AdminAttendeeButton(
-            text: setAttendance,
-            callback: () {
-              if (_formkey.currentState!.validate()) {
-                Provider.of<DBProvider>(context, listen: false).setAttendance(
-                    titleController.text,
-                    creatorNController.text,
-                    int.parse(attendeesNController.text),
-                    passwordController.text,
-                    context);
-              }
-            },
-          )
+          isLoading
+              ? CircularProgressIndicator(
+                  color: AppColors.whiteText,
+                )
+              : AdminAttendeeButton(
+                  text: setAttendance,
+                  callback: () {
+                    if (_formkey.currentState!.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      Provider.of<DBProvider>(context, listen: false)
+                          .setAttendance(
+                              titleController.text,
+                              creatorNController.text,
+                              passwordController.text,
+                              context,
+                              titleController,
+                              passwordController)
+                          .then((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }).catchError((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      });
+                    }
+                  },
+                )
         ],
       ),
     );

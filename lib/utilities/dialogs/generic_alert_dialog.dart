@@ -4,15 +4,19 @@ typedef DialogOptionBuilder<T> = Map<String, T?> Function();
 
 Future<T?> showGenericDialog<T>(
     {required BuildContext context,
-    required Widget? titleWidget,
+    required String title,
+    required Icon icon,
     required String content,
-    required DialogOptionBuilder optionsBuilder}) {
+    required DialogOptionBuilder optionsBuilder,
+    required bool isDimissible}) {
   final options = optionsBuilder();
   return showDialog(
+      barrierDismissible: isDimissible,
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: titleWidget,
+          icon: icon,
+          title: Text(title),
           content: Text(content),
           actions: options.keys.map((optionTitle) {
             final value = options[optionTitle];

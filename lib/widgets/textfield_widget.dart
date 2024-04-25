@@ -10,6 +10,8 @@ class TextFieldWidget extends StatelessWidget {
     this.username,
     this.onfieldSubmitted,
     this.focusNode,
+    this.initialValue,
+    required this.readOnly,
   });
 
   final TextEditingController controller;
@@ -17,11 +19,15 @@ class TextFieldWidget extends StatelessWidget {
   final IconData prefixIcon;
   final bool? username;
   final FocusNode? focusNode;
+  final String? initialValue;
   final Function(String)? onfieldSubmitted;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly,
+      initialValue: initialValue,
       focusNode: focusNode,
       onFieldSubmitted: onfieldSubmitted,
       textInputAction: TextInputAction.next,

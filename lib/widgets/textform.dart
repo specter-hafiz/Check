@@ -34,6 +34,7 @@ class _TextFormState extends State<TextForm> {
               controller: emailcontroller,
               hinttext: "Email",
               prefixIcon: Icons.mail,
+              readOnly: false,
             ),
             SizedBox(height: SizeConfig.blockSizeVertical! * 1.2),
             PasswordTextField(
@@ -49,12 +50,13 @@ class _TextFormState extends State<TextForm> {
                     text: signin,
                     callback: () {
                       if (_formkey.currentState!.validate()) {
+                        FocusNode().unfocus();
                         setState(() {
                           isLoading = true;
                         });
                         Provider.of<AuthProvider>(context, listen: false)
-                            .signUserIn(emailcontroller.text,
-                                passwordcontroller.text, context)
+                            .signUserIn(emailcontroller.text.trim(),
+                                passwordcontroller.text.trim(), context)
                             .then((_) {
                           setState(() {
                             isLoading = false;

@@ -1,5 +1,5 @@
-import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
+import 'package:check/screens/try_clip_path.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,11 @@ class _ResetPasswordFormState extends State<ResetPasswordForm> {
         SizedBox(height: SizeConfig.blockSizeVertical! * 1.0),
         PasswordTextField(passwordcontroller: rPasswordController),
         SizedBox(height: SizeConfig.blockSizeVertical! * 1.0),
-        AdminAttendeeButton(text: "Confirm")
+        AdminAttendeeButton(
+          text: "Confirm",
+          callback: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => TryClipPath())),
+        )
       ],
     ));
   }

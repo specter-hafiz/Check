@@ -103,7 +103,9 @@ class AdminHomeScreen extends StatelessWidget {
                 text: createAttendance,
                 callback: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CreateAttendanceScreen(),
+                    builder: (context) => CreateAttendanceScreen(
+                      username: currentUser,
+                    ),
                   ),
                 ),
               ),

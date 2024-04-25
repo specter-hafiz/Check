@@ -3,7 +3,6 @@ const String selectRole = "Select role";
 const String admin = "Admin";
 const String attendee = "Attendee";
 const String createNAcct = "Create New Account";
-const String username = "@Username";
 const String email = "Email";
 const String password = "Password";
 const String rememberMe = "Remember me";

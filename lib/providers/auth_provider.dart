@@ -133,14 +133,14 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _checkConnectivity(context);
 
-      User? user = FirebaseAuth.instance.currentUser;
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailAddress, password: password);
-      if (user != null)
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AdminHomeScreen(
-                  currentUser: user.displayName!,
-                )));
+      User? user = FirebaseAuth.instance.currentUser!;
+
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => AdminHomeScreen(
+                currentUser: user.displayName!,
+              )));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context)
@@ -225,10 +225,10 @@ class AuthProvider extends ChangeNotifier {
         }
       } else {
         // Attendance not found
-        await showMessageDialog(
+        await showErrorMessage(
             context,
             'Wrong password or Attendance sheet does not exist',
-            Icon(Icons.info));
+            "Attendance Sheet");
       }
     } on FirebaseException catch (e) {
       if (e.code == 'unavailable') {
