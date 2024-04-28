@@ -1,5 +1,6 @@
 import 'package:check/screens/admin_home_screen.dart';
 import 'package:check/screens/attendee_home_screen.dart';
+import 'package:check/screens/verify_email_screen.dart';
 import 'package:check/utilities/dialogs/error_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -98,26 +99,38 @@ class AuthProvider extends ChangeNotifier {
       BuildContext context) async {
     _checkConnectivity(context);
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      User? updateUser = FirebaseAuth.instance.currentUser;
-      updateUser!.updateDisplayName(username).then((value) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => AdminHomeScreen(
-                  currentUser: updateUser.displayName ?? "unknown",
-                )));
+
+      // Send verification email
+      await userCredential.user!.sendEmailVerification();
+
+      // Redirect to VerifyEmailScreen
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => VerifyEmailScreen(
+          userEmail: email,
+        ),
+      ));
+
+      // Listen to auth state changes to navigate to AdminHomeScreen
+      FirebaseAuth.instance.authStateChanges().listen((User? user) {
+        if (user != null && user.emailVerified) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) =>
+                AdminHomeScreen(currentUser: user.displayName ?? "unknown"),
+          ));
+        }
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Weak-Password")));
-        print('The password provided is too weak.');
+            .showSnackBar(SnackBar(content: Text("Weak password")));
       } else if (e.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Email already exist")));
-        print('The account already exists for that email.');
+            .showSnackBar(SnackBar(content: Text("Email already exists")));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Check internet connection and try again")));
@@ -133,33 +146,50 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _checkConnectivity(context);
 
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: emailAddress, password: password);
-      User? user = FirebaseAuth.instance.currentUser!;
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailAddress,
+        password: password,
+      );
 
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => AdminHomeScreen(
-                currentUser: user.displayName!,
-              )));
+      User? user = userCredential.user;
+
+      // Check if email is verified
+      if (user != null && user.emailVerified) {
+        // Navigate to AdminHomeScreen
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) =>
+              AdminHomeScreen(currentUser: user.displayName ?? "unknown"),
+        ));
+      } else {
+        // Send verification email
+        await user!.sendEmailVerification();
+
+        // Navigate to VerifyEmailScreen
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => VerifyEmailScreen(
+            userEmail: emailAddress,
+          ),
+        ));
+      }
     } on FirebaseAuthException catch (e) {
+      // Handle FirebaseAuth exceptions
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("User not found")));
-        print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Wrong password")));
-        print('Wrong password provided for that user.');
-      } else if (e.code == "invalid-credential") {
+      } else if (e.code == 'invalid-credential') {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Invalid credentials")));
-        print('Invalid credentials');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("Check internet connection and try again")));
       }
     } catch (e) {
-      print("an unknown error occurred");
+      // Handle other exceptions
+      print("An unknown error occurred");
       print(e.toString());
     }
   }
@@ -249,6 +279,16 @@ class AuthProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An unknown error occurred')),
       );
+    }
+  }
+
+  Future<void> sendResetPasswordLink(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      // Password reset email sent successfully
+    } catch (e) {
+      // Handle errors
+      print("Error sending password reset email: $e");
     }
   }
 }
