@@ -41,8 +41,7 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
             height: SizeConfig.screenHeight! * 0.25,
             width: double.infinity,
             decoration: BoxDecoration(
-              boxShadow: [BoxShadow(color: Colors.black, blurRadius: 4)],
-              color: AppColors.whiteText,
+              color: Theme.of(context).colorScheme.primaryContainer,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -57,8 +56,8 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
                 Text(
                   capitalize(widget.user),
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
               ],
@@ -72,8 +71,9 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
           height: SizeConfig.screenHeight! * 0.25,
           width: double.infinity,
           decoration: BoxDecoration(
-              color: AppColors.whiteText,
-              borderRadius: BorderRadius.circular(24)),
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(24),
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -87,9 +87,9 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
               Text(
                 widget.creatorName,
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800,
-                    color: Colors.black),
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                    ),
               ),
               Text(
                 titleMeeting,
@@ -105,9 +105,7 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
           height: SizeConfig.blockSizeHorizontal! * 4,
         ),
         isLoading
-            ? CircularProgressIndicator(
-                color: AppColors.whiteText,
-              )
+            ? CircularProgressIndicator(color: AppColors.blueText)
             : CheckInButton(callback: () {
                 setState(() {
                   isLoading = true;

@@ -2,6 +2,7 @@ import 'package:check/screens/admin_home_screen.dart';
 import 'package:check/screens/attendee_home_screen.dart';
 import 'package:check/screens/verify_email_screen.dart';
 import 'package:check/utilities/dialogs/error_dialog.dart';
+import 'package:check/utilities/dialogs/success_dailog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -282,12 +283,23 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> sendResetPasswordLink(String email) async {
+  Future<void> sendResetPasswordLink(BuildContext context, String email,
+      TextEditingController controller) async {
     try {
       await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+
       // Password reset email sent successfully
+      controller.clear();
+      showSuccessMessage(
+          context,
+          "An reset password link has been sent to this email " + email,
+          "Email");
     } catch (e) {
       // Handle errors
+      showErrorMessage(
+          context,
+          "Sorry, we are unable to send you a reset link.Try again later",
+          "Email");
       print("Error sending password reset email: $e");
     }
   }

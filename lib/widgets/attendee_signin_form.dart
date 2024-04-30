@@ -43,26 +43,17 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
     return Form(
         key: _formkey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (orientation == Orientation.portrait)
-              SizedBox(height: SizeConfig.blockSizeHorizontal! * 25),
-            Text(
-              attendee,
-              style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                    fontSize: 40,
-                    fontWeight: FontWeight.w500,
-                  ),
-            ),
-            Text(
-              signinToContinue,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium!
-                  .copyWith(fontSize: 20, color: AppColors.whiteText),
-            ),
             SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1,
+              height: SizeConfig.blockSizeVertical! * 1.5,
             ),
+            Text("Fill in the details to continue",
+                style: Theme.of(context).textTheme.bodyLarge),
+            SizedBox(
+              height: SizeConfig.blockSizeVertical! * 2.5,
+            ),
+            Text("Name*"),
             TextFieldWidget(
               onfieldSubmitted: (_) {
                 FocusScope.of(context).requestFocus(idFNode);
@@ -74,8 +65,9 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
               readOnly: false,
             ),
             SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1,
+              height: SizeConfig.blockSizeVertical! * 2.5,
             ),
+            Text("Id number*"),
             TextFieldWidget(
               focusNode: idFNode,
               username: true,
@@ -85,19 +77,48 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
               readOnly: false,
             ),
             SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1,
+              height: SizeConfig.blockSizeVertical! * 2.5,
             ),
-            PasswordTextField(passwordcontroller: passwordController),
+            Text("Password*"),
+            PasswordTextField(
+              passwordcontroller: passwordController,
+              callback: (_) {
+                FocusNode().unfocus();
+                if (_formkey.currentState!.validate()) {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  Provider.of<AuthProvider>(context, listen: false)
+                      .verifyAttendance(
+                    context,
+                    passwordController.text,
+                    nameController.text,
+                    idController.text,
+                    nameController,
+                    idController,
+                    passwordController,
+                  )
+                      .then((_) {
+                    setState(() {
+                      isLoading = false;
+                    });
+                  });
+                }
+              },
+            ),
             SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1,
+              height: SizeConfig.blockSizeVertical! * 2.5,
             ),
             isLoading
-                ? CircularProgressIndicator(
-                    color: AppColors.whiteText,
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blueText,
+                    ),
                   )
                 : AdminAttendeeButton(
-                    text: signin,
+                    text: login,
                     callback: () {
+                      FocusNode().unfocus();
                       if (_formkey.currentState!.validate()) {
                         setState(() {
                           isLoading = true;

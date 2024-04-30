@@ -101,7 +101,7 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
           ),
           isLoading
               ? CircularProgressIndicator(
-                  color: AppColors.whiteText,
+                  color: AppColors.blueText,
                 )
               : AdminAttendeeButton(
                   text: setAttendance,

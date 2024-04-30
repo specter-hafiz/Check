@@ -1,10 +1,13 @@
+import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
+import 'package:check/screens/forgot_password_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/checkbox.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,49 +29,91 @@ class _TextFormState extends State<TextForm> {
   Widget build(BuildContext context) {
     return Form(
         key: _formkey,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(children: [
-            TextFieldWidget(
-              username: false,
-              controller: emailcontroller,
-              hinttext: "Email",
-              prefixIcon: Icons.mail,
-              readOnly: false,
-            ),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 1.2),
-            PasswordTextField(
-              passwordcontroller: passwordcontroller,
-            ),
-            Row(children: [
-              CheckBox(),
-              Text(rememberMe),
-            ]),
-            isLoading
-                ? CircularProgressIndicator()
-                : AdminAttendeeButton(
-                    text: signin,
-                    callback: () {
-                      if (_formkey.currentState!.validate()) {
-                        FocusNode().unfocus();
-                        setState(() {
-                          isLoading = true;
-                        });
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .signUserIn(emailcontroller.text.trim(),
-                                passwordcontroller.text.trim(), context)
-                            .then((_) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }).catchError((_) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
-                      }
-                    }),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text("Email*"),
+          TextFieldWidget(
+            username: false,
+            controller: emailcontroller,
+            hinttext: "Email",
+            prefixIcon: Icons.mail,
+            readOnly: false,
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+          Text("Password*"),
+          PasswordTextField(
+            passwordcontroller: passwordcontroller,
+            callback: (_) {
+              FocusScope.of(context).unfocus();
+
+              if (_formkey.currentState!.validate()) {
+                setState(() {
+                  isLoading = true;
+                });
+                Provider.of<AuthProvider>(context, listen: false)
+                    .signUserIn(emailcontroller.text.trim(),
+                        passwordcontroller.text.trim(), context)
+                    .then((_) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }).catchError((_) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                });
+              }
+            },
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+          Row(children: [
+            CheckBox(),
+            Text(rememberMe),
+            Spacer(),
+            RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                text: "Forgot password",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium!
+                    .copyWith(color: AppColors.blueText),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => ForgotPasswordScreen()));
+                  },
+              ),
+            ])),
           ]),
-        ));
+          isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.blueText,
+                  ),
+                )
+              : AdminAttendeeButton(
+                  text: login,
+                  callback: () {
+                    FocusScope.of(context).unfocus();
+
+                    if (_formkey.currentState!.validate()) {
+                      setState(() {
+                        isLoading = true;
+                      });
+                      Provider.of<AuthProvider>(context, listen: false)
+                          .signUserIn(emailcontroller.text.trim(),
+                              passwordcontroller.text.trim(), context)
+                          .then((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }).catchError((_) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      });
+                    }
+                  }),
+        ]));
   }
 }

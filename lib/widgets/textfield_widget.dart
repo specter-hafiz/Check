@@ -49,23 +49,19 @@ class TextFieldWidget extends StatelessWidget {
         return null;
       },
       controller: controller,
-      style:
-          Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black),
+      style: Theme.of(context).textTheme.bodyMedium!,
       cursorColor: AppColors.blueText,
       decoration: InputDecoration(
-          prefixIconColor: AppColors.blueText,
-          fillColor: AppColors.whiteText,
-          filled: true,
           hintText: hinttext,
           prefixIcon: Icon(prefixIcon),
           errorBorder:
               OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
           focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.whiteText),
+              borderSide: BorderSide(color: AppColors.blueText),
               borderRadius: BorderRadius.circular(12)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.whiteText))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)))),
     );
   }
 }

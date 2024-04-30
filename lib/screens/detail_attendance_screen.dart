@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:check/components/colors.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,15 +12,26 @@ class DetailAttendanceScreen extends StatefulWidget {
     super.key,
     required this.docId,
     required this.creatorloc,
+    required this.active,
   });
   final String docId;
   final GeoPoint creatorloc;
+  final bool active;
 
   @override
   State<DetailAttendanceScreen> createState() => _DetailAttendanceScreenState();
 }
 
 class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
+  bool? switchValue;
+
+  @override
+  void initState() {
+    super.initState();
+    switchValue = widget.active;
+    // Fetch the value from the cloud and set switchValue accordingly
+  }
+
   double _calculateDistance(GeoPoint startLocation, GeoPoint endLocation) {
     // Extract latitude and longitude from startLocation and endLocation
     double startLat = startLocation.latitude;
@@ -43,8 +55,6 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
     return degrees * (pi / 180);
   }
 
-  bool switchValue = true;
-
   @override
   Widget build(BuildContext context) {
     User currentUser = FirebaseAuth.instance.currentUser!;
@@ -66,8 +76,8 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
               },
               icon: Icon(Icons.download)),
           Switch(
-              activeColor: Colors.red,
-              value: switchValue,
+              activeColor: AppColors.blueText,
+              value: switchValue!,
               onChanged: (bool newValue) {
                 setState(() {
                   switchValue = newValue;
@@ -81,17 +91,25 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
         stream: _attendeesStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
-            return Text('Something went wrong');
+            return Text(
+              'Something went wrong',
+              style: Theme.of(context).textTheme.bodyMedium,
+            );
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: AppColors.blueText,
+              ),
             );
           }
           if (snapshot.data!.docs.isEmpty) {
             return Center(
-              child: Text("No attendance recorded"),
+              child: Text(
+                "No attendance recorded",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             );
           }
           return ListView(

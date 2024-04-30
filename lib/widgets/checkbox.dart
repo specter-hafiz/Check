@@ -15,10 +15,9 @@ class _CheckBoxState extends State<CheckBox> {
 
   Widget build(BuildContext context) {
     return Checkbox(
-        side: BorderSide(color: AppColors.whiteText),
         checkColor: AppColors.blueText,
         value: ischeck,
-        activeColor: AppColors.whiteText,
+        activeColor: Colors.grey,
         onChanged: (bool? value) {
           setState(() {
             ischeck = value!;

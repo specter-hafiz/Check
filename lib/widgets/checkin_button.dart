@@ -11,27 +11,31 @@ class CheckInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
       onTap: callback,
-      child: Container(
-        alignment: Alignment.center,
-        height: 50,
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.fingerprint,
-              size: 40,
-            ),
-            Text(checkin,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold, color: AppColors.blueText)),
-          ],
+      child: Card(
+        elevation: 3,
+        child: Container(
+          alignment: Alignment.center,
+          height: 70,
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.fingerprint,
+                size: 40,
+              ),
+              Text(checkin,
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontWeight: FontWeight.bold, color: AppColors.whiteText)),
+            ],
+          ),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: AppColors.blueText.withOpacity(0.8)),
         ),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: AppColors.whiteText),
       ),
     );
   }

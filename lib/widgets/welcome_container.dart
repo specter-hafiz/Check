@@ -1,4 +1,3 @@
-import 'package:check/components/colors.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeContainer extends StatelessWidget {
@@ -15,8 +14,7 @@ class WelcomeContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     final size = MediaQuery.of(context).size;
-    return InkWell(
-      borderRadius: BorderRadius.circular(22),
+    return GestureDetector(
       onTap: callback,
       child: Card(
         child: Container(
@@ -26,9 +24,7 @@ class WelcomeContainer extends StatelessWidget {
           height: orientation == Orientation.portrait
               ? size.height * 0.2
               : size.width * 0.2,
-          decoration: BoxDecoration(
-              color: AppColors.whiteText,
-              borderRadius: BorderRadius.circular(24)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

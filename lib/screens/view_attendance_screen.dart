@@ -1,3 +1,4 @@
+import 'package:check/components/colors.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:check/screens/detail_attendance_screen.dart';
 import 'package:check/utilities/dialogs/delete_dialog.dart';
@@ -37,17 +38,25 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              return Text('Something went wrong');
+              return Text(
+                'Something went wrong',
+                style: Theme.of(context).textTheme.bodyMedium,
+              );
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: AppColors.blueText,
+                ),
               );
             }
             if (snapshot.data!.docs.isEmpty) {
               return Center(
-                child: Text("No attendance created yet"),
+                child: Text(
+                  "No attendance created yet",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               );
             }
             return ListView(
@@ -64,6 +73,7 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => DetailAttendanceScreen(
                                 docId: data["doc_id"],
+                                active: data["is_active"],
                                 creatorloc: data["creator_loc"],
                               )));
                     },

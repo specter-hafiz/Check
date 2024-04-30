@@ -1,8 +1,8 @@
 import 'package:check/components/colors.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
-import 'package:check/screens/reset_password_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
+import 'package:check/widgets/back_button.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +17,7 @@ class ForgotPasswordScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        leading: Backbutton(),
         title: Text(
           "Forgot Password",
           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
@@ -34,10 +35,9 @@ class ForgotPasswordScreen extends StatelessWidget {
             children: [
               Text(
                 "Enter your email below.\nA reset password link will be sent to you shortly",
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontSize: 15, color: AppColors.whiteText),
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontSize: 15,
+                    ),
               ),
               ForgotPasswordForm(),
             ],
@@ -60,7 +60,7 @@ class ForgotPasswordForm extends StatefulWidget {
 class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
   final TextEditingController controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-
+  bool isloading = false;
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -80,17 +80,37 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 1.5,
             ),
-            AdminAttendeeButton(
-              text: "Verify",
-              callback: () {
-                if (_formKey.currentState!.validate()) {
-                  Provider.of<AuthProvider>(
-                    context,
-                    listen: false,
-                  ).sendResetPasswordLink(controller.text);
-                }
-              },
-            )
+            isloading
+                ? Center(
+                    child: CircularProgressIndicator(color: AppColors.blueText),
+                  )
+                : AdminAttendeeButton(
+                    text: "Verify",
+                    callback: () {
+                      FocusScope.of(context).unfocus();
+
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isloading = true;
+                        });
+                        Provider.of<AuthProvider>(
+                          context,
+                          listen: false,
+                        )
+                            .sendResetPasswordLink(
+                                context, controller.text, controller)
+                            .then((_) {
+                          setState(() {
+                            isloading = false;
+                          });
+                        }).catchError((_) {
+                          setState(() {
+                            isloading = false;
+                          });
+                        });
+                      }
+                    },
+                  )
           ],
         ));
   }

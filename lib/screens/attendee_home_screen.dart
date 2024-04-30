@@ -29,17 +29,17 @@ class AttendeeHomeScreen extends StatelessWidget {
         titleSpacing: 0,
         leading: Icon(
           Icons.check_box_outlined,
-          color: AppColors.whiteText,
           size: 35,
         ),
         title: Text(
           check,
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-              color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         actions: [
           PopupMenuButton<MenuAction>(
-              iconColor: AppColors.whiteText,
               onSelected: (value) {
                 switch (value) {
                   case MenuAction.logout:
@@ -52,7 +52,7 @@ class AttendeeHomeScreen extends StatelessWidget {
                       onTap: () async {},
                       child: Text("Logout"),
                       value: MenuAction.logout,
-                    )
+                    ),
                   ])
         ],
       ),

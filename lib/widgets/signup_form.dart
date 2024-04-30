@@ -1,8 +1,7 @@
-import 'package:check/components/strings.dart';
+import 'package:check/components/colors.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
-import 'package:check/widgets/checkbox.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +27,9 @@ class _SignUpFormState extends State<SignUpForm> {
     return Form(
         key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text("Name*"),
             TextFieldWidget(
               username: true,
               controller: usernameController,
@@ -36,9 +37,8 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icons.person,
               readOnly: false,
             ),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1.2,
-            ),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+            Text("Email*"),
             TextFieldWidget(
               username: false,
               controller: emailController,
@@ -46,21 +46,21 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icons.mail,
               readOnly: false,
             ),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical! * 1.2,
-            ),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+            Text("Password*"),
             PasswordTextField(passwordcontroller: passwordController),
-            Row(children: [
-              CheckBox(),
-              Text(rememberMe),
-            ]),
+            Text("Must be at least 8 characters"),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
             isLoading
                 ? Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: AppColors.blueText,
+                    ),
                   )
                 : AdminAttendeeButton(
                     text: "Sign Up",
                     callback: () {
+                      FocusScope.of(context).unfocus();
                       if (_formKey.currentState!.validate()) {
                         setState(() {
                           isLoading = true;

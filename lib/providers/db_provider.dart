@@ -257,7 +257,7 @@ class DBProvider extends ChangeNotifier {
   Future<void> openOrCloseDB(
       BuildContext context, DocumentReference document, bool isActive) async {
     try {
-      document.update({
+      await document.update({
         "is_active": isActive,
       });
       showSuccessMessage(
@@ -309,20 +309,20 @@ class DBProvider extends ChangeNotifier {
         }
 
         // Save Excel file
-        var dir = await getExternalStorageDirectory();
-        var filePath = '${dir!.path}/attendees.xlsx';
-        print(filePath);
+        // var dir = await getExternalStorageDirectory();
+
         sheet.autoFitColumn(1);
         sheet.autoFitColumn(2);
         sheet.autoFitColumn(3);
         final List<int> bytes = workbook.saveAsStream();
-        await File(filePath).writeAsBytes(bytes);
+        await File("/storage/emulated/0/Download/attendees.xlsx")
+            .writeAsBytes(bytes);
         workbook.dispose();
         showSuccessMessage(
             context, 'Excel file created successfully!', "Success");
 
         // Open the file
-        OpenFile.open(filePath);
+        OpenFile.open("/storage/emulated/0/Download/attendees.xlsx");
       } else {
         showErrorMessage(
             context, 'You cannot export an empty attendance sheet', "Error");

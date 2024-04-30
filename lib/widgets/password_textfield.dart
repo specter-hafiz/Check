@@ -6,10 +6,12 @@ class PasswordTextField extends StatefulWidget {
     super.key,
     required this.passwordcontroller,
     this.hintText,
+    this.callback,
   });
 
   final TextEditingController passwordcontroller;
   final String? hintText;
+  final Function(String)? callback;
 
   @override
   State<PasswordTextField> createState() => _PasswordTextFieldState();
@@ -26,23 +28,25 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onFieldSubmitted: widget.callback,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return "Field required";
+        }
+        if (value.length < 8) {
+          return "Password must be 8 digits or more";
         }
 
         return null;
       },
       controller: widget.passwordcontroller,
-      style:
-          Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black),
+      style: Theme.of(context).textTheme.bodyMedium!,
       cursorColor: AppColors.blueText,
       obscureText: passwordVisible,
       decoration: InputDecoration(
           labelStyle:
               Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 15),
           suffixIcon: IconButton(
-              color: AppColors.blueText,
               onPressed: () {
                 setState(() {
                   passwordVisible = !passwordVisible;
@@ -50,19 +54,17 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
               },
               icon: Icon(
                   passwordVisible ? Icons.visibility : Icons.visibility_off)),
-          prefixIconColor: AppColors.blueText,
-          fillColor: AppColors.whiteText,
-          filled: true,
           hintText: widget.hintText ?? "Password",
           prefixIcon: Icon(Icons.lock),
-          errorBorder:
-              OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
           focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.whiteText),
+              borderSide: BorderSide(color: AppColors.blueText),
               borderRadius: BorderRadius.circular(12)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: AppColors.whiteText))),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)))),
     );
   }
 }

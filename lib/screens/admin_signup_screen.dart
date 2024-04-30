@@ -1,7 +1,9 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
+import 'package:check/widgets/back_button.dart';
 import 'package:check/widgets/signup_form.dart';
+import 'package:check/widgets/social_button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -14,43 +16,41 @@ class AdminSignupScreen extends StatelessWidget {
     final orientation = MediaQuery.of(context).orientation;
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        titleSpacing: 0,
+        leading: Backbutton(),
+        title: Text(
+          signup,
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal! * 2),
+              horizontal: SizeConfig.blockSizeHorizontal! * 4),
           child: Column(
             children: [
-              if (orientation == Orientation.portrait)
-                SizedBox(height: SizeConfig.blockSizeHorizontal! * 25),
-              Text(
-                admin,
-                style: Theme.of(context).textTheme.displayLarge!.copyWith(
-                      fontSize: 40,
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
+              SizedBox(height: SizeConfig.blockSizeVertical! * 1.5),
               Text(
                 signuptocontinue,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(fontSize: 20, color: AppColors.whiteText),
               ),
+              SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+              SocialButton(),
+              SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
               SignUpForm(),
-              SizedBox(height: SizeConfig.blockSizeVertical! * 1.5),
+              SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
               RichText(
                   text: TextSpan(children: [
                 TextSpan(
                     text: "Already have an account?",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(color: AppColors.whiteText)),
+                    style: Theme.of(context).textTheme.bodyLarge),
                 TextSpan(
                   text: " Sign In",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.bold),
+                      color: AppColors.blueText, fontWeight: FontWeight.bold),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       Navigator.of(context).pop();

@@ -1,3 +1,5 @@
+import 'package:check/components/colors.dart';
+import 'package:check/config/size_config.dart';
 import 'package:flutter/material.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
@@ -10,17 +12,29 @@ class VerifyEmailScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Verify Email Screen"),
       ),
-      body: Column(
-        children: [
-          RichText(
-              text: TextSpan(children: [
-            TextSpan(text: "An verification email has been sent to "),
-            TextSpan(text: userEmail),
-            TextSpan(
-                text:
-                    "Please check your mail box to confirm and verify your email."),
-          ]))
-        ],
+      body: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: SizeConfig.blockSizeHorizontal! * 3),
+        child: Column(
+          children: [
+            RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                  text: "An verification email has been sent to ",
+                  style: Theme.of(context).textTheme.bodyMedium),
+              TextSpan(
+                  text: userEmail + "\n",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(color: AppColors.blueText)),
+              TextSpan(
+                  text:
+                      "Please check your mail box to confirm and verify your email.",
+                  style: Theme.of(context).textTheme.bodyMedium),
+            ]))
+          ],
+        ),
       ),
     );
   }
