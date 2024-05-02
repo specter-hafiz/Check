@@ -25,6 +25,14 @@ class _TextFormState extends State<TextForm> {
   TextEditingController passwordcontroller = TextEditingController();
   final _formkey = GlobalKey<FormState>();
   bool isLoading = false;
+
+  @override
+  void dispose() {
+    emailcontroller.dispose();
+    passwordcontroller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -43,31 +51,13 @@ class _TextFormState extends State<TextForm> {
           PasswordTextField(
             passwordcontroller: passwordcontroller,
             callback: (_) {
-              FocusScope.of(context).unfocus();
-
-              if (_formkey.currentState!.validate()) {
-                setState(() {
-                  isLoading = true;
-                });
-                Provider.of<AuthProvider>(context, listen: false)
-                    .signUserIn(emailcontroller.text.trim(),
-                        passwordcontroller.text.trim(), context)
-                    .then((_) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                }).catchError((_) {
-                  setState(() {
-                    isLoading = false;
-                  });
-                });
-              }
+              _ActionMethod(context);
             },
           ),
           SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
           Row(children: [
             CheckBox(),
-            Text(rememberMe),
+            Text(rememberMe, style: Theme.of(context).textTheme.bodyLarge),
             Spacer(),
             RichText(
                 text: TextSpan(children: [
@@ -75,8 +65,8 @@ class _TextFormState extends State<TextForm> {
                 text: "Forgot password",
                 style: Theme.of(context)
                     .textTheme
-                    .bodyMedium!
-                    .copyWith(color: AppColors.blueText),
+                    .bodyLarge!
+                    .copyWith(color: AppColors.whiteText),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -88,32 +78,36 @@ class _TextFormState extends State<TextForm> {
           isLoading
               ? Center(
                   child: CircularProgressIndicator(
-                    color: AppColors.blueText,
+                    color: AppColors.whiteText,
                   ),
                 )
               : AdminAttendeeButton(
                   text: login,
                   callback: () {
-                    FocusScope.of(context).unfocus();
-
-                    if (_formkey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      Provider.of<AuthProvider>(context, listen: false)
-                          .signUserIn(emailcontroller.text.trim(),
-                              passwordcontroller.text.trim(), context)
-                          .then((_) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }).catchError((_) {
-                        setState(() {
-                          isLoading = false;
-                        });
-                      });
-                    }
+                    _ActionMethod(context);
                   }),
         ]));
+  }
+
+  void _ActionMethod(BuildContext context) {
+    FocusScope.of(context).unfocus();
+
+    if (_formkey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      Provider.of<AuthProvider>(context, listen: false)
+          .signUserIn(emailcontroller.text.trim(),
+              passwordcontroller.text.trim(), context)
+          .then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      }).catchError((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
   }
 }

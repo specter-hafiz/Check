@@ -22,6 +22,15 @@ class _SignUpFormState extends State<SignUpForm> {
   TextEditingController emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -37,7 +46,7 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icons.person,
               readOnly: false,
             ),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2.0),
             Text("Email*"),
             TextFieldWidget(
               username: false,
@@ -46,45 +55,54 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icons.mail,
               readOnly: false,
             ),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2.0),
             Text("Password*"),
-            PasswordTextField(passwordcontroller: passwordController),
+            PasswordTextField(
+              passwordcontroller: passwordController,
+              callback: (_) {
+                ActionMethod(context);
+              },
+            ),
             Text("Must be at least 8 characters"),
-            SizedBox(height: SizeConfig.blockSizeVertical! * 2.5),
+            SizedBox(height: SizeConfig.blockSizeVertical! * 2.0),
             isLoading
                 ? Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.blueText,
+                      color: AppColors.whiteText,
                     ),
                   )
                 : AdminAttendeeButton(
                     text: "Sign Up",
                     callback: () {
-                      FocusScope.of(context).unfocus();
-                      if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .signUpUser(
-                                usernameController.text.trim(),
-                                emailController.text.trim(),
-                                passwordController.text.trim(),
-                                context)
-                            .then((_) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }).catchError((_) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
-                        ;
-                      }
+                      ActionMethod(context);
                     },
                   ),
           ],
         ));
+  }
+
+  void ActionMethod(BuildContext context) {
+    FocusScope.of(context).unfocus();
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      Provider.of<AuthProvider>(context, listen: false)
+          .signUpUser(
+              usernameController.text.trim(),
+              emailController.text.trim(),
+              passwordController.text.trim(),
+              context)
+          .then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      }).catchError((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+      ;
+    }
   }
 }

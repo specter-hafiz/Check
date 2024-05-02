@@ -1,65 +1,13 @@
 import 'dart:io';
-import 'package:open_file/open_file.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart';
 import 'package:check/utilities/dialogs/error_dialog.dart';
 import 'package:check/utilities/dialogs/success_dailog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:excel/excel.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:path_provider/path_provider.dart';
 
 class DBProvider extends ChangeNotifier {
-  Future<Position> _determinePosition(BuildContext context) async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Enable location services to sign attendance.')));
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
-  }
-
-  void _checkConnectivity(BuildContext context) async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.none) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              "No Internet', 'Please check your internet connection and try again.")));
-      return;
-    }
-  }
-
   Future<void> setAttendance(
     String title,
     String creatorName,
@@ -68,15 +16,6 @@ class DBProvider extends ChangeNotifier {
     TextEditingController titleController,
     TextEditingController passwordController,
   ) async {
-    _checkConnectivity(context);
-
-    // Determine the creator's position
-    Position creatorPosition = await _determinePosition(context);
-    GeoPoint creatorLocation = GeoPoint(
-      creatorPosition.latitude,
-      creatorPosition.longitude,
-    );
-
     // Get the current user
     User user = FirebaseAuth.instance.currentUser!;
     DateTime date = DateTime.now();
@@ -100,7 +39,7 @@ class DBProvider extends ChangeNotifier {
         "is_active": true,
         "creator_name": creatorName,
         "title": title,
-        "creator_loc": creatorLocation,
+        // "creator_loc": creatorLocation,
         "password": password,
         "created_at": date.toIso8601String(),
       });
@@ -166,15 +105,6 @@ class DBProvider extends ChangeNotifier {
     String userId,
     String password,
   ) async {
-    _checkConnectivity(context);
-
-    // Determine the creator's position
-    Position creatorPosition = await _determinePosition(context);
-    GeoPoint attendeeLocation = GeoPoint(
-      creatorPosition.latitude,
-      creatorPosition.longitude,
-    );
-
     // Get the current date and time
     DateTime date = DateTime.now();
 
@@ -224,7 +154,6 @@ class DBProvider extends ChangeNotifier {
             "name": name,
             "id_number": idNumber,
             "signed_at": date.toIso8601String(),
-            "location": attendeeLocation,
           });
 
           // Update the newly added record with its document ID
@@ -273,6 +202,25 @@ class DBProvider extends ChangeNotifier {
   Future<void> exportToExcel(
       BuildContext context, DocumentReference document) async {
     try {
+      // Check if permission to access storage is granted
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        // If permission is not granted, request permission from the user
+        status = await Permission.storage.request();
+        if (!status.isGranted) {
+          // Permission is still not granted, handle this according to your app's logic
+          // For example, you can show a message to the user indicating that permission is required
+          return;
+        }
+      }
+
+      // Prompt the user to enter the filename
+      String? filename = await _showFilenameInputDialog(context);
+      if (filename == null || filename.isEmpty) {
+        // User canceled or entered an empty filename, exit function
+        return;
+      }
+
       QuerySnapshot snapshot =
           await document.collection('attendancesheet').get();
       if (snapshot.docs.isNotEmpty) {
@@ -309,27 +257,53 @@ class DBProvider extends ChangeNotifier {
         }
 
         // Save Excel file
-        // var dir = await getExternalStorageDirectory();
-
+        String filePath = '/storage/emulated/0/Download/$filename.xlsx';
         sheet.autoFitColumn(1);
         sheet.autoFitColumn(2);
         sheet.autoFitColumn(3);
         final List<int> bytes = workbook.saveAsStream();
-        await File("/storage/emulated/0/Download/attendees.xlsx")
-            .writeAsBytes(bytes);
+        await File(filePath).writeAsBytes(bytes);
         workbook.dispose();
         showSuccessMessage(
             context, 'Excel file created successfully!', "Success");
-
-        // Open the file
-        OpenFile.open("/storage/emulated/0/Download/attendees.xlsx");
       } else {
         showErrorMessage(
             context, 'You cannot export an empty attendance sheet', "Error");
       }
     } catch (e) {
+      print(e);
       showErrorMessage(context, 'Failed to export to Excel: $e', "Error");
     }
+  }
+
+  Future<String?> _showFilenameInputDialog(BuildContext context) async {
+    TextEditingController controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Filename'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(hintText: 'Enter filename'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(controller.text);
+              },
+              child: Text('Save'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<bool> _isPasswordUnique(String password) async {

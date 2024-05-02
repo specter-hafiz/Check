@@ -7,6 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
+final LinearGradient containerGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Colors.blue[900]!,
+      Colors.blue[800]!,
+      Colors.blue[700]!,
+      Colors.blue[600]!,
+      Colors.blue[500]!,
+    ]);
 
 class attendeeHomeContent extends StatefulWidget {
   const attendeeHomeContent({
@@ -34,30 +44,76 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+        SizedBox(
+          height: SizeConfig.screenHeight! * .25,
+          child: Image.asset("assets/images/sign.png"),
+        ),
+        Material(
+          elevation: 4,
+          type: MaterialType.card,
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             alignment: Alignment.center,
             height: SizeConfig.screenHeight! * 0.25,
+            decoration: BoxDecoration(
+                gradient: containerGradient,
+                borderRadius: BorderRadius.circular(12)),
+            child: RichText(
+                text: TextSpan(children: [
+              TextSpan(
+                text: "Welcome \n",
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 35,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+              ),
+              TextSpan(
+                text: capitalize(widget.user),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 50,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ])),
+          ),
+        ),
+        SizedBox(
+          height: SizeConfig.blockSizeHorizontal! * 2,
+        ),
+        Material(
+          borderRadius: BorderRadius.circular(24),
+          elevation: 4,
+          type: MaterialType.card,
+          child: Container(
+            height: SizeConfig.screenHeight! * 0.25,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primaryContainer,
+              gradient: containerGradient,
+              borderRadius: BorderRadius.circular(24),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  welcome,
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontSize: 50,
-                        fontWeight: FontWeight.w900,
+                  attendanceBy,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 25,
+                        color: Colors.white,
                       ),
                 ),
                 Text(
-                  capitalize(widget.user),
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w500,
+                  widget.creatorName,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                Text(
+                  titleMeeting,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 25,
+                        color: Colors.white,
                       ),
                 ),
               ],
@@ -65,47 +121,10 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
           ),
         ),
         SizedBox(
-          height: SizeConfig.blockSizeHorizontal! * 2,
-        ),
-        Container(
-          height: SizeConfig.screenHeight! * 0.25,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                attendanceBy,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: AppColors.blueText, fontSize: 25),
-              ),
-              Text(
-                widget.creatorName,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
-                    ),
-              ),
-              Text(
-                titleMeeting,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(color: AppColors.blueText, fontSize: 25),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
           height: SizeConfig.blockSizeHorizontal! * 4,
         ),
         isLoading
-            ? CircularProgressIndicator(color: AppColors.blueText)
+            ? CircularProgressIndicator(color: AppColors.whiteText)
             : CheckInButton(callback: () {
                 setState(() {
                   isLoading = true;

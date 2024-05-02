@@ -31,7 +31,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: Provider.of<ThemeProvider>(context).themeData,
+      theme: ThemeData(
+          primaryColor: Color(0xff0D2CD9),
+          appBarTheme: AppBarTheme(backgroundColor: Colors.blue.shade600)),
       home: WelcomeScreen(),
       routes: {
         "/welcome": (context) => WelcomeScreen(),

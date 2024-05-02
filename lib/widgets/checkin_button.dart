@@ -1,5 +1,6 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
+import 'package:check/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
 class CheckInButton extends StatelessWidget {
@@ -14,7 +15,8 @@ class CheckInButton extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: callback,
-      child: Card(
+      child: Material(
+        borderRadius: BorderRadius.circular(8),
         elevation: 3,
         child: Container(
           alignment: Alignment.center,
@@ -33,8 +35,7 @@ class CheckInButton extends StatelessWidget {
             ],
           ),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColors.blueText.withOpacity(0.8)),
+              borderRadius: BorderRadius.circular(8), gradient: linearGradient),
         ),
       ),
     );

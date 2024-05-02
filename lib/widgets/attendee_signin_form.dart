@@ -38,8 +38,6 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
-
     return Form(
         key: _formkey,
         child: Column(
@@ -83,27 +81,7 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             PasswordTextField(
               passwordcontroller: passwordController,
               callback: (_) {
-                FocusNode().unfocus();
-                if (_formkey.currentState!.validate()) {
-                  setState(() {
-                    isLoading = true;
-                  });
-                  Provider.of<AuthProvider>(context, listen: false)
-                      .verifyAttendance(
-                    context,
-                    passwordController.text,
-                    nameController.text,
-                    idController.text,
-                    nameController,
-                    idController,
-                    passwordController,
-                  )
-                      .then((_) {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
-                }
+                _ActionMethod(context);
               },
             ),
             SizedBox(
@@ -112,36 +90,40 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             isLoading
                 ? Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.blueText,
+                      color: AppColors.whiteText,
                     ),
                   )
                 : AdminAttendeeButton(
                     text: login,
                     callback: () {
-                      FocusNode().unfocus();
-                      if (_formkey.currentState!.validate()) {
-                        setState(() {
-                          isLoading = true;
-                        });
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .verifyAttendance(
-                          context,
-                          passwordController.text,
-                          nameController.text,
-                          idController.text,
-                          nameController,
-                          idController,
-                          passwordController,
-                        )
-                            .then((_) {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        });
-                      }
+                      _ActionMethod(context);
                     },
                   )
           ],
         ));
+  }
+
+  void _ActionMethod(BuildContext context) {
+    FocusScope.of(context).unfocus();
+    if (_formkey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+      Provider.of<AuthProvider>(context, listen: false)
+          .verifyAttendance(
+        context,
+        passwordController.text,
+        nameController.text,
+        idController.text,
+        nameController,
+        idController,
+        passwordController,
+      )
+          .then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
   }
 }

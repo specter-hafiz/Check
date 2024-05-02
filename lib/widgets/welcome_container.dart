@@ -14,22 +14,30 @@ class WelcomeContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     final size = MediaQuery.of(context).size;
-    return GestureDetector(
+    return InkWell(
       onTap: callback,
-      child: Card(
+      child: Material(
+        elevation: 3,
+        borderRadius: BorderRadius.circular(24),
+        type: MaterialType.card,
         child: Container(
           width: orientation == Orientation.portrait
-              ? size.height * 0.2
+              ? size.width * 0.8
               : size.width * 0.2,
           height: orientation == Orientation.portrait
               ? size.height * 0.2
               : size.width * 0.2,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(begin: Alignment.topLeft, colors: [
+                Colors.blue[800]!,
+                Colors.blue[700]!,
+              ])),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               icon,
-              Text(string),
+              Text(string, style: Theme.of(context).textTheme.bodyLarge),
             ],
           ),
         ),

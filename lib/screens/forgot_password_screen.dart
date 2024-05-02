@@ -1,6 +1,7 @@
 import 'package:check/components/colors.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
+import 'package:check/screens/welcome_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/back_button.dart';
 import 'package:check/widgets/textfield_widget.dart';
@@ -26,21 +27,25 @@ class ForgotPasswordScreen extends StatelessWidget {
               ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: SizeConfig.blockSizeHorizontal! * 2),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Enter your email below.\nA reset password link will be sent to you shortly",
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontSize: 15,
-                    ),
-              ),
-              ForgotPasswordForm(),
-            ],
+      body: Container(
+        height: SizeConfig.screenHeight,
+        decoration: BoxDecoration(gradient: linearGradient),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: SizeConfig.blockSizeHorizontal! * 2),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Enter your email below.\nA reset password link will be sent to you shortly",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 18,
+                      ),
+                ),
+                ForgotPasswordForm(),
+              ],
+            ),
           ),
         ),
       ),
@@ -71,6 +76,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
               height: SizeConfig.blockSizeVertical! * 1.5,
             ),
             TextFieldWidget(
+              onfieldSubmitted: (_) {
+                _ActionMethod(context);
+              },
               username: false,
               controller: controller,
               hinttext: "Email",
@@ -87,31 +95,32 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
                 : AdminAttendeeButton(
                     text: "Verify",
                     callback: () {
-                      FocusScope.of(context).unfocus();
-
-                      if (_formKey.currentState!.validate()) {
-                        setState(() {
-                          isloading = true;
-                        });
-                        Provider.of<AuthProvider>(
-                          context,
-                          listen: false,
-                        )
-                            .sendResetPasswordLink(
-                                context, controller.text, controller)
-                            .then((_) {
-                          setState(() {
-                            isloading = false;
-                          });
-                        }).catchError((_) {
-                          setState(() {
-                            isloading = false;
-                          });
-                        });
-                      }
+                      _ActionMethod(context);
                     },
                   )
           ],
         ));
+  }
+
+  void _ActionMethod(BuildContext context) {
+    FocusScope.of(context).unfocus();
+
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        isloading = true;
+      });
+      Provider.of<AuthProvider>(
+        context,
+        listen: false,
+      ).sendResetPasswordLink(context, controller.text, controller).then((_) {
+        setState(() {
+          isloading = false;
+        });
+      }).catchError((_) {
+        setState(() {
+          isloading = false;
+        });
+      });
+    }
   }
 }

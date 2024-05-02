@@ -1,6 +1,6 @@
-import 'dart:math';
 import 'package:check/components/colors.dart';
 import 'package:check/providers/db_provider.dart';
+import 'package:check/screens/welcome_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +11,9 @@ class DetailAttendanceScreen extends StatefulWidget {
   const DetailAttendanceScreen({
     super.key,
     required this.docId,
-    required this.creatorloc,
     required this.active,
   });
   final String docId;
-  final GeoPoint creatorloc;
   final bool active;
 
   @override
@@ -30,29 +28,6 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
     super.initState();
     switchValue = widget.active;
     // Fetch the value from the cloud and set switchValue accordingly
-  }
-
-  double _calculateDistance(GeoPoint startLocation, GeoPoint endLocation) {
-    // Extract latitude and longitude from startLocation and endLocation
-    double startLat = startLocation.latitude;
-    double startLon = startLocation.longitude;
-    double endLat = endLocation.latitude;
-    double endLon = endLocation.longitude;
-    // Calculate the distance between startLocation and endLocation
-    const int earthRadius = 6371000; // Earth's radius in meters
-    double dLat = _degreesToRadians(endLat - startLat);
-    double dLon = _degreesToRadians(endLon - startLon);
-    double a = sin(dLat / 2) * sin(dLat / 2) +
-        cos(_degreesToRadians(startLat)) *
-            cos(_degreesToRadians(endLat)) *
-            sin(dLon / 2) *
-            sin(dLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    return earthRadius * c;
-  }
-
-  double _degreesToRadians(double degrees) {
-    return degrees * (pi / 180);
   }
 
   @override
@@ -70,13 +45,23 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
         title: const Text("Attendees"),
         actions: [
           IconButton(
+              color: Colors.white,
               onPressed: () {
                 Provider.of<DBProvider>(context, listen: false)
                     .exportToExcel(context, document);
               },
               icon: Icon(Icons.download)),
           Switch(
-              activeColor: AppColors.blueText,
+              activeColor: Colors.blue[900],
+              trackOutlineColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return Colors.blue.withOpacity(0.3);
+                }
+                return Colors.blue[900]; // Use the default color.
+              }),
+              activeTrackColor: Colors.white,
+              inactiveThumbColor: Colors.black,
               value: switchValue!,
               onChanged: (bool newValue) {
                 setState(() {
@@ -121,9 +106,14 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
               String timeformated =
                   DateFormat.jm().format(DateTime.parse(data["signed_at"]));
 
-              double distance =
-                  _calculateDistance(widget.creatorloc, data["location"]);
-              return Card(
+              // double distance =
+              //     _calculateDistance(widget.creatorloc, data["location"]);
+              return Container(
+                margin: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: linearGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: ListTile(
                   onTap: null,
                   title: Row(
@@ -134,10 +124,9 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
                     ],
                   ),
                   subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(data["id_number"]),
-                      Text(distance.toStringAsFixed(2) + "m far"),
+                      // Text(distance.toStringAsFixed(2) + "m far"),
                     ],
                   ),
                 ),

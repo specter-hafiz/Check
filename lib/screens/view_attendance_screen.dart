@@ -1,6 +1,7 @@
 import 'package:check/components/colors.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:check/screens/detail_attendance_screen.dart';
+import 'package:check/screens/welcome_screen.dart';
 import 'package:check/utilities/dialogs/delete_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -31,7 +32,7 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
         .snapshots();
     return Scaffold(
         appBar: AppBar(
-          title: const Text("View Attendance"),
+          title: const Text("Attendance Sheets"),
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: _usersStream,
@@ -67,14 +68,18 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
                     .format(DateTime.parse(data["created_at"]));
                 String formatedTime =
                     DateFormat.jm().format(DateTime.parse(data["created_at"]));
-                return Card(
+                return Container(
+                  margin: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: linearGradient,
+                  ),
                   child: ListTile(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => DetailAttendanceScreen(
                                 docId: data["doc_id"],
                                 active: data["is_active"],
-                                creatorloc: data["creator_loc"],
                               )));
                     },
                     title: Text(data["title"]),
@@ -89,7 +94,10 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
                                     data["doc_id"], data["password_doc_id"]);
                           }
                         },
-                        icon: Icon(Icons.delete)),
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        )),
                   ),
                 );
               }).toList(),
