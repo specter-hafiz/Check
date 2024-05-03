@@ -1,8 +1,8 @@
 import 'package:check/components/colors.dart';
-import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -77,11 +77,11 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
             height: SizeConfig.blockSizeVertical! * 1,
           ),
           isLoading
-              ? CircularProgressIndicator(
+              ? MyCircularProgressIndicator(
                   color: AppColors.whiteText,
                 )
               : AdminAttendeeButton(
-                  text: setAttendance,
+                  text: "Create",
                   callback: () {
                     _ActionMethod(context);
                   },

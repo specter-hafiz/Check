@@ -9,7 +9,8 @@ Future<void> showErrorMessage(
       context: context,
       icon: Icon(
         Icons.error_outline,
-        color: AppColors.blueText,
+        color: AppColors.whiteText,
+        size: 50,
       ),
       title: title,
       content: message,

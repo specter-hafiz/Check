@@ -4,6 +4,7 @@ import 'package:check/providers/auth_provider.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/back_button.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +91,9 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
             ),
             isloading
                 ? Center(
-                    child: CircularProgressIndicator(color: AppColors.blueText),
+                    child: MyCircularProgressIndicator(
+                      color: AppColors.blueText,
+                    ),
                   )
                 : AdminAttendeeButton(
                     text: "Verify",

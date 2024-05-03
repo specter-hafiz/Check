@@ -7,6 +7,8 @@ import 'package:check/screens/view_attendance_screen.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:check/utilities/dialogs/logout_dialog.dart';
 import 'package:check/utilities/enums/menu_action.dart';
+import 'package:check/widgets/admin_home_container.dart';
+import 'package:check/widgets/appbar_container.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +36,8 @@ class AdminHomeScreen extends StatelessWidget {
               onSelected: (value) async {
                 switch (value) {
                   case MenuAction.logout:
-                    final shouldLogout = await logoutDialog(context);
-                    if (shouldLogout) {
+                    bool? shouldLogout = await logoutDialog(context);
+                    if (shouldLogout!) {
                       Provider.of<AuthProvider>(context, listen: false)
                           .signUserOut(context);
                     }
@@ -146,77 +148,6 @@ class AdminHomeScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class AppBarContainer extends StatelessWidget {
-  const AppBarContainer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-            Colors.blue[600]!,
-            Colors.blue[600]!,
-            Colors.blue[600]!,
-          ])),
-    );
-  }
-}
-
-class AdminHomeContainer extends StatelessWidget {
-  const AdminHomeContainer({
-    super.key,
-    required this.orientation,
-    required this.size,
-    required this.text,
-  });
-
-  final Orientation orientation;
-  final Size size;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      width: orientation == Orientation.portrait
-          ? size.width * 0.8
-          : size.width * 0.2,
-      height: orientation == Orientation.portrait
-          ? size.height * 0.2
-          : size.width * 0.2,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.blue[200]!,
-                Colors.blue[300]!,
-                Colors.blue[400]!,
-                Colors.blue[500]!,
-                Colors.blue[600]!,
-                Colors.blue[700]!,
-                Colors.blue[800]!,
-                Colors.blue[900]!,
-              ])),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 20,
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-        textAlign: TextAlign.center,
       ),
     );
   }

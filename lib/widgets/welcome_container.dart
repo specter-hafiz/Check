@@ -14,12 +14,12 @@ class WelcomeContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     final size = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: callback,
-      child: Material(
-        elevation: 3,
-        borderRadius: BorderRadius.circular(24),
-        type: MaterialType.card,
+    return Material(
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      type: MaterialType.card,
+      child: InkWell(
+        onTap: callback,
         child: Container(
           width: orientation == Orientation.portrait
               ? size.width * 0.8

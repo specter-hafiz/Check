@@ -1,7 +1,7 @@
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
-import 'package:check/screens/admin_home_screen.dart';
 import 'package:check/screens/welcome_screen.dart';
+import 'package:check/widgets/appbar_container.dart';
 import 'package:check/widgets/attendee_signin_form.dart';
 import 'package:flutter/material.dart';
 

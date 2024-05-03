@@ -1,6 +1,8 @@
 import 'package:check/components/colors.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:check/screens/welcome_screen.dart';
+import 'package:check/widgets/detail_screen_listtile.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +93,7 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: CircularProgressIndicator(
+              child: MyCircularProgressIndicator(
                 color: AppColors.blueText,
               ),
             );
@@ -120,39 +122,7 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
                   gradient: linearGradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: ListTile(
-                  onTap: null,
-                  title: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          data["name"],
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge!
-                              .copyWith(
-                                  fontSize: 18, fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                      Flexible(
-                          child: Text(
-                        formatDated,
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: Colors.white,
-                              fontSize: 15,
-                            ),
-                      ))
-                    ],
-                  ),
-                  subtitle: Text(
-                    data["id_number"],
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ),
+                child: DetailListTile(data: data, formatDated: formatDated),
               );
             }).toList(),
           );

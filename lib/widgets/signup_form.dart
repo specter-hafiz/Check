@@ -2,6 +2,7 @@ import 'package:check/components/colors.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/auth_provider.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class _SignUpFormState extends State<SignUpForm> {
             SizedBox(height: SizeConfig.blockSizeVertical! * 2.0),
             isLoading
                 ? Center(
-                    child: CircularProgressIndicator(
+                    child: MyCircularProgressIndicator(
                       color: AppColors.whiteText,
                     ),
                   )

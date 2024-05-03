@@ -3,6 +3,7 @@ import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
 import 'package:check/providers/db_provider.dart';
 import 'package:check/widgets/checkin_button.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -124,7 +125,9 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
           height: SizeConfig.blockSizeHorizontal! * 4,
         ),
         isLoading
-            ? CircularProgressIndicator(color: AppColors.whiteText)
+            ? MyCircularProgressIndicator(
+                color: AppColors.whiteText,
+              )
             : CheckInButton(callback: () {
                 setState(() {
                   isLoading = true;

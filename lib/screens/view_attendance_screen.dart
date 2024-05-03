@@ -3,6 +3,7 @@ import 'package:check/providers/db_provider.dart';
 import 'package:check/screens/detail_attendance_screen.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:check/utilities/dialogs/delete_dialog.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
 
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(
+                child: MyCircularProgressIndicator(
                   color: AppColors.blueText,
                 ),
               );
@@ -62,7 +63,7 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
             if (snapshot.data!.docs.isEmpty) {
               return Center(
                 child: Text(
-                  "No attendance created yet",
+                  "No attendance sheets created",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

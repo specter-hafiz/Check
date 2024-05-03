@@ -9,7 +9,8 @@ Future<void> showSuccessMessage(
       context: context,
       icon: Icon(
         Icons.check,
-        color: AppColors.blueText,
+        color: AppColors.whiteText,
+        size: 50,
       ),
       title: title,
       content: message,

@@ -5,6 +5,7 @@ import 'package:check/providers/auth_provider.dart';
 import 'package:check/screens/forgot_password_screen.dart';
 import 'package:check/widgets/admin_attendee_button.dart';
 import 'package:check/widgets/checkbox.dart';
+import 'package:check/widgets/mycircular_progress_indicator.dart';
 import 'package:check/widgets/password_textfield.dart';
 import 'package:check/widgets/textfield_widget.dart';
 import 'package:flutter/gestures.dart';
@@ -77,7 +78,7 @@ class _TextFormState extends State<TextForm> {
           ]),
           isLoading
               ? Center(
-                  child: CircularProgressIndicator(
+                  child: MyCircularProgressIndicator(
                     color: AppColors.whiteText,
                   ),
                 )
