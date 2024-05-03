@@ -1,6 +1,7 @@
 import 'package:check/components/colors.dart';
 import 'package:check/components/strings.dart';
 import 'package:check/config/size_config.dart';
+import 'package:check/screens/admin_home_screen.dart';
 import 'package:check/screens/admin_signup_screen.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:check/widgets/textform.dart';
@@ -15,6 +16,9 @@ class AdminSigninScreen extends StatelessWidget {
     SizeConfig().init(context);
 
     return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: AppBarContainer(),
+      ),
       body: Container(
         height: SizeConfig.screenHeight,
         decoration: BoxDecoration(gradient: linearGradient),
@@ -26,11 +30,6 @@ class AdminSigninScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: Icon(Icons.arrow_back)),
                 SizedBox(
                   height: SizeConfig.blockSizeVertical! * 25,
                   child: Image.asset("assets/images/login.png"),

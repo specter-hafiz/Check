@@ -42,7 +42,14 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
         document.collection("attendancesheet").snapshots();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Attendees"),
+        titleSpacing: 0,
+        title: Text(
+          "Attendees",
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
         actions: [
           IconButton(
               color: Colors.white,
@@ -93,7 +100,10 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
             return Center(
               child: Text(
                 "No attendance recorded",
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             );
           }
@@ -101,13 +111,9 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
                   document.data()! as Map<String, dynamic>;
-              String formatDated = DateFormat.yMMMMd("en_US")
+              String formatDated = DateFormat.yMd("en_US")
+                  .add_jm()
                   .format(DateTime.parse(data["signed_at"]));
-              String timeformated =
-                  DateFormat.jm().format(DateTime.parse(data["signed_at"]));
-
-              // double distance =
-              //     _calculateDistance(widget.creatorloc, data["location"]);
               return Container(
                 margin: EdgeInsets.all(8),
                 decoration: BoxDecoration(
@@ -119,15 +125,32 @@ class _DetailAttendanceScreenState extends State<DetailAttendanceScreen> {
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(data["name"]),
-                      Text(formatDated + "," + timeformated)
+                      Flexible(
+                        child: Text(
+                          data["name"],
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge!
+                              .copyWith(
+                                  fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      Flexible(
+                          child: Text(
+                        formatDated,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                      ))
                     ],
                   ),
-                  subtitle: Row(
-                    children: [
-                      Text(data["id_number"]),
-                      // Text(distance.toStringAsFixed(2) + "m far"),
-                    ],
+                  subtitle: Text(
+                    data["id_number"],
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
               );

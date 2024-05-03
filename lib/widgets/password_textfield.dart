@@ -34,6 +34,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
         gradient: linearGradient,
       ),
       child: TextFormField(
+        cursorErrorColor: Colors.red[900],
         onFieldSubmitted: widget.callback,
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -46,8 +47,10 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
           return null;
         },
         controller: widget.passwordcontroller,
-        style: Theme.of(context).textTheme.bodyMedium!,
-        cursorColor: AppColors.blueText,
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontSize: 18,
+            ),
+        cursorColor: AppColors.whiteText,
         obscureText: passwordVisible,
         decoration: InputDecoration(
             suffixIconColor: AppColors.whiteText,

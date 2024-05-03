@@ -53,8 +53,10 @@ class TextFieldWidget extends StatelessWidget {
           return null;
         },
         controller: controller,
-        style: Theme.of(context).textTheme.bodyMedium!,
-        cursorColor: AppColors.blueText,
+        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              fontSize: 18,
+            ),
+        cursorColor: AppColors.whiteText,
         decoration: InputDecoration(
             hintText: hinttext,
             prefixIconColor: AppColors.whiteText,

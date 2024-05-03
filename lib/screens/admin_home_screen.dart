@@ -21,19 +21,12 @@ class AdminHomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: AppBarContainer(),
-        titleSpacing: 0,
-        leading: Icon(
-          Icons.check_box_outlined,
-          color: AppColors.whiteText,
-          size: 35,
-        ),
-        title: Text(
-          "Check",
-          style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                color: Colors.white,
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-              ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            "assets/images/icon.png",
+            fit: BoxFit.contain,
+          ),
         ),
         actions: [
           PopupMenuButton<MenuAction>(
@@ -166,7 +159,15 @@ class AppBarContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(gradient: linearGradient),
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+            Colors.blue[600]!,
+            Colors.blue[600]!,
+            Colors.blue[600]!,
+          ])),
     );
   }
 }

@@ -32,7 +32,14 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
         .snapshots();
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Attendance Sheets"),
+          titleSpacing: 0,
+          title: Text(
+            "Attendance Sheets",
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: AppColors.whiteText),
+          ),
         ),
         body: StreamBuilder<QuerySnapshot>(
           stream: _usersStream,
@@ -56,7 +63,10 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
               return Center(
                 child: Text(
                   "No attendance created yet",
-                  style: Theme.of(context).textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               );
             }
@@ -64,10 +74,10 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
               children: snapshot.data!.docs.map((DocumentSnapshot document) {
                 Map<String, dynamic> data =
                     document.data()! as Map<String, dynamic>;
-                String formatedDated = DateFormat.yMMMMd("en_US")
+                String formatedDated = DateFormat.yMd("en_US")
+                    .add_jm()
                     .format(DateTime.parse(data["created_at"]));
-                String formatedTime =
-                    DateFormat.jm().format(DateTime.parse(data["created_at"]));
+
                 return Container(
                   margin: EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -82,8 +92,20 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
                                 active: data["is_active"],
                               )));
                     },
-                    title: Text(data["title"]),
-                    subtitle: Text(formatedDated + "," + formatedTime),
+                    title: Text(
+                      data["title"],
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    subtitle: Text(
+                      "Created on: " + formatedDated,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(color: Colors.white),
+                    ),
                     trailing: IconButton(
                         onPressed: () async {
                           bool isDeleted = await deleteDialog(

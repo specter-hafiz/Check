@@ -10,7 +10,13 @@ class VerifyEmailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Verify Email Screen"),
+        title: Text(
+          "Verify Email",
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: AppColors.whiteText),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(

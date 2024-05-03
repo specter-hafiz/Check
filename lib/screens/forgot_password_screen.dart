@@ -21,10 +21,10 @@ class ForgotPasswordScreen extends StatelessWidget {
         leading: Backbutton(),
         title: Text(
           "Forgot Password",
-          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(context)
+              .textTheme
+              .titleLarge!
+              .copyWith(color: AppColors.whiteText),
         ),
       ),
       body: Container(

@@ -15,7 +15,7 @@ class CreateAttendanceScreen extends StatelessWidget {
       appBar: AppBar(
         titleSpacing: 0,
         title: Text(
-          createAttendance,
+          setAttendance,
           style: Theme.of(context)
               .textTheme
               .titleLarge!
