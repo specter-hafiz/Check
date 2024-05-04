@@ -88,7 +88,7 @@ class AdminHomeScreen extends StatelessWidget {
                   height: SizeConfig.blockSizeHorizontal! * 2,
                 ),
                 SizedBox(
-                  height: SizeConfig.blockSizeVertical! * 25,
+                  height: SizeConfig.screenHeight! * 0.25,
                   child: Image.asset("assets/images/admin.png"),
                 ),
                 SizedBox(

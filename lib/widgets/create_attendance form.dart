@@ -99,9 +99,9 @@ class _CreateAttendanceFormState extends State<CreateAttendanceForm> {
       });
       Provider.of<DBProvider>(context, listen: false)
           .setAttendance(
-              titleController.text,
-              creatorNController.text,
-              passwordController.text,
+              titleController.text.trim(),
+              creatorNController.text.trim(),
+              passwordController.text.trim(),
               context,
               titleController,
               passwordController)

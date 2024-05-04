@@ -1,6 +1,19 @@
+import 'package:check/components/colors.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
+
+final TextStyle style = TextStyle(
+  fontFamily: "Poppins",
+  fontWeight: FontWeight.w600,
+  fontSize: 18,
+  color: AppColors.whiteText,
+);
+final TextStyle titleStyle = TextStyle(
+    color: AppColors.whiteText,
+    fontFamily: "Poppins",
+    fontWeight: FontWeight.bold,
+    fontSize: 22);
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -17,41 +30,66 @@ class _IntroScreenState extends State<IntroScreen> {
     super.initState();
 
     listContentConfig.add(
-      const ContentConfig(
-        title: "ERASER",
+      ContentConfig(
+        styleTitle: titleStyle,
+        styleDescription: style,
+        title: "MANAGE ATTENDANCE",
         description:
-            "Allow miles wound place the leave had. To sitting subject no improve studied limited",
-        pathImage: "images/photo_eraser.png",
-        backgroundColor: Color(0xfff5a623),
+            "Get started with Attendance Manager by effortlessly setting attendance sessions and securely sharing access with attendees using unique passwords.",
+        pathImage: "assets/images/control.png",
+        colorBegin: Colors.blue[800],
+        colorEnd: Colors.blue[700],
+        directionColorBegin: Alignment.topLeft,
+        directionColorEnd: Alignment.bottomRight,
+        backgroundImageFit: BoxFit.fill,
       ),
     );
     listContentConfig.add(
-      const ContentConfig(
-        title: "PENCIL",
+      ContentConfig(
+        title: "SECURE ACCESS",
+        styleTitle: titleStyle,
+        styleDescription: style,
         description:
-            "Ye indulgence unreserved connection alteration appearance",
-        pathImage: "images/photo_pencil.png",
-        backgroundColor: Color(0xff203152),
+            "Authenticate yourself to initiate attendance sessions, ensuring data integrity and accountability. ",
+        pathImage: "assets/images/secure.png",
+        colorBegin: Colors.blue[800],
+        colorEnd: Colors.blue[700],
+        directionColorBegin: Alignment.topLeft,
+        directionColorEnd: Alignment.bottomRight,
       ),
     );
     listContentConfig.add(
-      const ContentConfig(
-        title: "RULER",
+      ContentConfig(
+        styleTitle: titleStyle,
+        title: "EXPORT DATA",
+        styleDescription: style,
         description:
-            "Much evil soon high in hope do view. Out may few northward believing attempted. Yet timed being songs marry one defer men our. Although finished blessing do of",
-        pathImage: "images/photo_ruler.png",
-        backgroundColor: Color(0xff9932CC),
+            "Effortlessly export detailed attendee lists in Excel format after recording attendance",
+        pathImage: "assets/images/save.png",
+        colorBegin: Colors.blue[800],
+        colorEnd: Colors.blue[700],
+        directionColorBegin: Alignment.topLeft,
+        directionColorEnd: Alignment.bottomRight,
       ),
     );
-  }
-
-  void onDonePress() {
-    print("End of slides");
   }
 
   @override
   Widget build(BuildContext context) {
     return IntroSlider(
+      doneButtonStyle: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(AppColors.whiteText),
+          foregroundColor: WidgetStatePropertyAll(AppColors.blueText)),
+      skipButtonStyle: ButtonStyle(
+        backgroundColor: WidgetStatePropertyAll(AppColors.whiteText),
+        foregroundColor: WidgetStatePropertyAll(AppColors.blueText),
+      ),
+      nextButtonStyle: ButtonStyle(
+        foregroundColor: WidgetStatePropertyAll(AppColors.whiteText),
+      ),
+      indicatorConfig: IndicatorConfig(
+        colorActiveIndicator: AppColors.whiteText,
+      ),
       key: UniqueKey(),
       listContentConfig: listContentConfig,
       onDonePress: () {

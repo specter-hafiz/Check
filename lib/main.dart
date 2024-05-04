@@ -1,6 +1,7 @@
 import 'package:check/firebase_options.dart';
 import 'package:check/providers/auth_provider.dart';
 import 'package:check/providers/db_provider.dart';
+import 'package:check/screens/intro_screen.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primaryColor: Color(0xff0D2CD9),
           appBarTheme: AppBarTheme(backgroundColor: Colors.blue.shade600)),
-      home: WelcomeScreen(),
+      home: IntroScreen(),
       routes: {
         "/welcome": (context) => WelcomeScreen(),
       },
