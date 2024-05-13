@@ -88,7 +88,7 @@ class _SignUpFormState extends State<SignUpForm> {
       setState(() {
         isLoading = true;
       });
-      Provider.of<AuthProvider>(context, listen: false)
+      Provider.of<AuthenticationProvider>(context, listen: false)
           .signUpUser(
               usernameController.text.trim(),
               emailController.text.trim(),

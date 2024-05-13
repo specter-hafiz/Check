@@ -1,5 +1,6 @@
 import 'package:check/components/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CheckBox extends StatefulWidget {
   const CheckBox({
@@ -12,6 +13,13 @@ class CheckBox extends StatefulWidget {
 
 class _CheckBoxState extends State<CheckBox> {
   bool ischeck = false;
+  _updateCheckboxState(bool value) async {
+    if (value) {
+      // Check if the checkbox is checked
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('login', value);
+    }
+  }
 
   Widget build(BuildContext context) {
     return Checkbox(
@@ -33,6 +41,7 @@ class _CheckBoxState extends State<CheckBox> {
         onChanged: (bool? value) {
           setState(() {
             ischeck = value!;
+            _updateCheckboxState(ischeck);
           });
         });
   }

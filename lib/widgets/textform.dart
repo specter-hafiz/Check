@@ -97,7 +97,7 @@ class _TextFormState extends State<TextForm> {
       setState(() {
         isLoading = true;
       });
-      Provider.of<AuthProvider>(context, listen: false)
+      Provider.of<AuthenticationProvider>(context, listen: false)
           .signUserIn(emailcontroller.text.trim(),
               passwordcontroller.text.trim(), context)
           .then((_) {

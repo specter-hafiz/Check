@@ -1,7 +1,9 @@
 import 'package:check/components/colors.dart';
+import 'package:check/components/shared_preferences.dart';
 import 'package:check/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final TextStyle style = TextStyle(
   fontFamily: "Poppins",
@@ -93,6 +95,8 @@ class _IntroScreenState extends State<IntroScreen> {
       key: UniqueKey(),
       listContentConfig: listContentConfig,
       onDonePress: () {
+        SharedPreferences? prefs = SharedPrefs.instance;
+        prefs.setBool("shownbefore", true);
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => WelcomeScreen()));
       },

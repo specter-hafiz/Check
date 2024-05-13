@@ -112,7 +112,7 @@ class _ForgotPasswordFormState extends State<ForgotPasswordForm> {
       setState(() {
         isloading = true;
       });
-      Provider.of<AuthProvider>(
+      Provider.of<AuthenticationProvider>(
         context,
         listen: false,
       ).sendResetPasswordLink(context, controller.text, controller).then((_) {

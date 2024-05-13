@@ -9,17 +9,20 @@ import 'package:check/utilities/dialogs/logout_dialog.dart';
 import 'package:check/utilities/enums/menu_action.dart';
 import 'package:check/widgets/admin_home_container.dart';
 import 'package:check/widgets/appbar_container.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminHomeScreen extends StatelessWidget {
-  const AdminHomeScreen({super.key, required this.currentUser});
-  final String currentUser;
+  const AdminHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     final size = MediaQuery.of(context).size;
+    final user = FirebaseAuth.instance.currentUser;
+    String username = user!.displayName ?? "Unknown";
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: AppBarContainer(),
@@ -38,9 +41,14 @@ class AdminHomeScreen extends StatelessWidget {
                   case MenuAction.logout:
                     bool? shouldLogout = await logoutDialog(context);
                     if (shouldLogout!) {
-                      Provider.of<AuthProvider>(context, listen: false)
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      prefs.setBool("login", false);
+                      Provider.of<AuthenticationProvider>(context,
+                              listen: false)
                           .signUserOut(context);
-                    }
+                      Navigator.of(context);
+                    } else {}
                     break;
                 }
               },
@@ -78,7 +86,7 @@ class AdminHomeScreen extends StatelessWidget {
                   height: SizeConfig.blockSizeHorizontal! * 2,
                 ),
                 Text(
-                  currentUser,
+                  username,
                   style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
@@ -107,7 +115,7 @@ class AdminHomeScreen extends StatelessWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => CreateAttendanceScreen(
-                                  username: currentUser,
+                                  username: username,
                                 ),
                               ),
                             );

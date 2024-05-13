@@ -14,7 +14,7 @@ class AttendanceVerificationResult {
   AttendanceVerificationResult(this.creatorName, this.docId);
 }
 
-class AuthProvider extends ChangeNotifier {
+class AuthenticationProvider extends ChangeNotifier {
   Future signUpUser(String username, String email, String password,
       BuildContext context) async {
     try {
@@ -38,8 +38,7 @@ class AuthProvider extends ChangeNotifier {
       FirebaseAuth.instance.authStateChanges().listen((User? user) {
         if (user != null && user.emailVerified) {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) =>
-                AdminHomeScreen(currentUser: user.displayName ?? "unknown"),
+            builder: (context) => AdminHomeScreen(),
           ));
         }
       });
@@ -75,8 +74,7 @@ class AuthProvider extends ChangeNotifier {
       if (user != null && user.emailVerified) {
         // Navigate to AdminHomeScreen
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) =>
-              AdminHomeScreen(currentUser: user.displayName ?? "unknown"),
+          builder: (context) => AdminHomeScreen(),
         ));
       } else {
         // Send verification email

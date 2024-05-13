@@ -109,7 +109,7 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
       setState(() {
         isLoading = true;
       });
-      Provider.of<AuthProvider>(context, listen: false)
+      Provider.of<AuthenticationProvider>(context, listen: false)
           .verifyAttendance(
         context,
         passwordController.text,
