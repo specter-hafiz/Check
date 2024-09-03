@@ -24,6 +24,7 @@ class attendeeHomeContent extends StatefulWidget {
     super.key,
     required this.user,
     required this.creatorName,
+    required this.meetingTitle,
     required this.idNumber,
     required this.userId,
     required this.password,
@@ -31,6 +32,7 @@ class attendeeHomeContent extends StatefulWidget {
 
   final String user;
   final String creatorName;
+  final String meetingTitle;
   final String idNumber;
   final String userId;
   final String password;
@@ -59,24 +61,27 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
             decoration: BoxDecoration(
                 gradient: containerGradient,
                 borderRadius: BorderRadius.circular(12)),
-            child: RichText(
-                text: TextSpan(children: [
-              TextSpan(
-                text: "Welcome \n",
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontSize: 35,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-              ),
-              TextSpan(
-                text: capitalize(widget.user),
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      fontSize: 50,
-                      fontWeight: FontWeight.w700,
-                    ),
-              ),
-            ])),
+            child: Center(
+              child: RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                  text: "Welcome \n",
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontSize: 35,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                ),
+                TextSpan(
+                  text: capitalize(widget.user),
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontSize: 50,
+                        overflow: TextOverflow.ellipsis,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ])),
+            ),
           ),
         ),
         SizedBox(
@@ -109,13 +114,17 @@ class _attendeeHomeContentState extends State<attendeeHomeContent> {
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
                       ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  titleMeeting,
+                  widget.meetingTitle,
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontSize: 25,
                         color: Colors.white,
                       ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),

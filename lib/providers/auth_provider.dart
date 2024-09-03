@@ -6,6 +6,7 @@ import 'package:check/utilities/dialogs/success_dailog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AttendanceVerificationResult {
   final String creatorName;
@@ -18,6 +19,11 @@ class AuthenticationProvider extends ChangeNotifier {
   Future signUpUser(String username, String email, String password,
       BuildContext context) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      // Store the username locally
+      await prefs.setString('username', username);
+
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -26,15 +32,14 @@ class AuthenticationProvider extends ChangeNotifier {
 
       // Send verification email
       await userCredential.user!.sendEmailVerification();
+      await userCredential.user!.updateDisplayName(username);
 
       // Redirect to VerifyEmailScreen
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => VerifyEmailScreen(
-          userEmail: email,
-        ),
+        builder: (context) => VerifyEmailScreen(userEmail: email),
       ));
 
-      // Listen to auth state changes to navigate to AdminHomeScreen
+      // Listen to auth state changes to navigate to AdminHomeScreen after email verification
       FirebaseAuth.instance.authStateChanges().listen((User? user) {
         if (user != null && user.emailVerified) {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -62,6 +67,8 @@ class AuthenticationProvider extends ChangeNotifier {
   Future signUserIn(
       String emailAddress, String password, BuildContext context) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailAddress,
@@ -73,6 +80,7 @@ class AuthenticationProvider extends ChangeNotifier {
       // Check if email is verified
       if (user != null && user.emailVerified) {
         // Navigate to AdminHomeScreen
+        await prefs.setString('username', user.displayName ?? "Admin");
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => AdminHomeScreen(),
         ));
@@ -121,6 +129,7 @@ class AuthenticationProvider extends ChangeNotifier {
 
   Future<void> verifyAttendance(
     BuildContext context,
+    bool loading,
     String password,
     String user,
     String idNumber,
@@ -139,6 +148,7 @@ class AuthenticationProvider extends ChangeNotifier {
         for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
           String creatorName = documentSnapshot["creator_name"];
           String userId = documentSnapshot["user_id"];
+          String titleOfMeeting = documentSnapshot["title"];
           String docid = documentSnapshot["doc_id"];
           Navigator.push(
             context,
@@ -147,6 +157,7 @@ class AuthenticationProvider extends ChangeNotifier {
                 user: user,
                 idNumber: idNumber,
                 creatorName: creatorName,
+                meetingTitle: titleOfMeeting,
                 docId: docid,
                 userId: userId,
                 password: password,
@@ -156,6 +167,7 @@ class AuthenticationProvider extends ChangeNotifier {
           namecontroller.clear();
           idcontroller.clear();
           passwordcontroller.clear();
+          loading = false;
         }
       } else {
         // Attendance not found
@@ -180,6 +192,7 @@ class AuthenticationProvider extends ChangeNotifier {
       }
     } catch (e) {
       // Handle other unknown errors
+      print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('An unknown error occurred')),
       );

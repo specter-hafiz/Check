@@ -56,8 +56,8 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 Text(selectRole,
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.normal,
-                        )),
+                        fontWeight: FontWeight.normal,
+                        color: AppColors.whiteText)),
                 SizedBox(
                   height: SizeConfig.blockSizeHorizontal! * 3,
                 ),

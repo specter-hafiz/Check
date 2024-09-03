@@ -16,7 +16,7 @@ class Backbutton extends StatelessWidget {
         margin: EdgeInsets.all(8),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.withOpacity(0.3))),
+            border: Border.all(color: Colors.white.withOpacity(0.5))),
         child: Icon(Icons.arrow_back),
       ),
     );

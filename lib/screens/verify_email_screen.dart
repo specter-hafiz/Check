@@ -27,18 +27,29 @@ class VerifyEmailScreen extends StatelessWidget {
                 text: TextSpan(children: [
               TextSpan(
                   text: "An verification email has been sent to ",
-                  style: Theme.of(context).textTheme.bodyMedium),
-              TextSpan(
-                  text: userEmail + "\n",
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium!
-                      .copyWith(color: AppColors.blueText)),
+                      .copyWith(fontSize: 18)),
+              TextSpan(
+                  text: userEmail + "\n",
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: AppColors.blueText,
+                        fontSize: 19,
+                      )),
               TextSpan(
                   text:
                       "Please check your mail box to confirm and verify your email.",
-                  style: Theme.of(context).textTheme.bodyMedium),
-            ]))
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium!
+                      .copyWith(fontSize: 18)),
+            ])),
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("Ok"))
           ],
         ),
       ),

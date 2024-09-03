@@ -51,7 +51,12 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 2.5,
             ),
-            Text("Name*"),
+            Text(
+              "Name*",
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: AppColors.whiteText,
+                  ),
+            ),
             TextFieldWidget(
               onfieldSubmitted: (_) {
                 FocusScope.of(context).requestFocus(idFNode);
@@ -65,7 +70,12 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 2.5,
             ),
-            Text("Id number*"),
+            Text(
+              "Id number*",
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: AppColors.whiteText,
+                  ),
+            ),
             TextFieldWidget(
               focusNode: idFNode,
               username: true,
@@ -77,7 +87,12 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
             SizedBox(
               height: SizeConfig.blockSizeVertical! * 2.5,
             ),
-            Text("Password*"),
+            Text(
+              "Password*",
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    color: AppColors.whiteText,
+                  ),
+            ),
             PasswordTextField(
               passwordcontroller: passwordController,
               callback: (_) {
@@ -112,6 +127,7 @@ class _AttendeeSignInFormState extends State<AttendeeSignInForm> {
       Provider.of<AuthenticationProvider>(context, listen: false)
           .verifyAttendance(
         context,
+        isLoading,
         passwordController.text,
         nameController.text,
         idController.text,

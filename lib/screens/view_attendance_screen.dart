@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+enum Options { view, delete }
+
 class ViewAttendanceScreen extends StatefulWidget {
   const ViewAttendanceScreen({super.key});
 
@@ -86,42 +88,79 @@ class _ViewAttendanceScreenState extends State<ViewAttendanceScreen> {
                     gradient: linearGradient,
                   ),
                   child: ListTile(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DetailAttendanceScreen(
-                                docId: data["doc_id"],
-                                active: data["is_active"],
-                              )));
-                    },
-                    title: Text(
-                      data["title"],
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                    ),
-                    subtitle: Text(
-                      "Created on: " + formatedDated,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.white),
-                    ),
-                    trailing: IconButton(
-                        onPressed: () async {
-                          bool isDeleted = await deleteDialog(
-                              context, "Attendance Deletion");
-                          if (isDeleted) {
-                            Provider.of<DBProvider>(context, listen: false)
-                                .deleteAttendance(context, data["user_id"],
-                                    data["doc_id"], data["password_doc_id"]);
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => DetailAttendanceScreen(
+                                  docId: data["doc_id"],
+                                  active: data["is_active"],
+                                )));
+                      },
+                      title: Text(
+                        data["title"],
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      subtitle: Text(
+                        "Created on: " + formatedDated,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(color: Colors.white),
+                      ),
+                      trailing: PopupMenuButton<Options>(
+                        iconColor: AppColors.whiteText,
+                        onSelected: (value) async {
+                          if (value == Options.delete) {
+                            bool isDeleted = await deleteDialog(
+                                context, "Attendance Sheet Deletion");
+                            if (isDeleted) {
+                              Provider.of<DBProvider>(context, listen: false)
+                                  .deleteAttendance(context, data["user_id"],
+                                      data["doc_id"], data["password_doc_id"]);
+                            }
+                          } else if (value == Options.view) {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Text("Attendance Password"),
+                                      content: Text(data["password"]),
+                                      actions: [
+                                        ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("Dismiss"))
+                                      ],
+                                    ));
                           }
                         },
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        )),
-                  ),
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            child: Text("Show Password"),
+                            value: Options.view,
+                          ),
+                          const PopupMenuItem(
+                            child: Text("Delete"),
+                            value: Options.delete,
+                          ),
+                        ],
+                      )),
+                  // IconButton(
+                  //       onPressed: () async {
+                  //         bool isDeleted = await deleteDialog(
+                  //             context, "Attendance Deletion");
+                  //         if (isDeleted) {
+                  //           Provider.of<DBProvider>(context, listen: false)
+                  //               .deleteAttendance(context, data["user_id"],
+                  //                   data["doc_id"], data["password_doc_id"]);
+                  //         }
+                  //       },
+                  //       icon: Icon(
+                  //         Icons.delete,
+                  //         color: Colors.white,
+                  //       )),
                 );
               }).toList(),
             );

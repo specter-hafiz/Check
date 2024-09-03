@@ -55,6 +55,7 @@ class DBProvider extends ChangeNotifier {
         "creator_name": creatorName,
         "ref_id": ref.id,
         "doc_id": passwordDocRef.id,
+        "title": title,
       });
       await attendance.doc(ref.id).update({
         "doc_id": ref.id,
