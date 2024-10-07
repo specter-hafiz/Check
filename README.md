@@ -1,16 +1,9 @@
 # check
 
-A new Flutter project.
+An attendance management application built with flutter, firebase and provider.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Details
+#This project makes use of firebase auth for authentication of administrators and attentees
+#This project makes use of cloud firestore for storage of attendee details
+#Admins have control of what time attendees can sign attendance or not
+#Admins have the option to export an excel sheet containing the list of attendees details 
